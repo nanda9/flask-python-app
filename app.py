@@ -6,10 +6,10 @@ app = Flask(__name__)
 def home():
     return """
 	CI/CD Docker Pipeline Running!
-    Hello Docker!.. 
-	This is my First local host application deployed on Docker container.
-	Designed by Nandakumar Jyothi, DevOps Engineer.
-	"""
+    Hello Docker Container!..
+    This is my First local host application deployed on Docker container.
+    Designed by Nandakumar Jyothi, DevOps Engineer.
+    """
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
