@@ -5,9 +5,9 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return """
-    Hello from Render + Docker!  CI/CD Docker Pipeline Running!
-    This is my First local host application deployed on Render + Docker container.
-    Designed by Nandakumar Jyothi, DevOps Engineer.
+    <h1>Hello from Render + Docker!  CI/CD Docker Pipeline Running!</h1>
+    <h2>This is my First local host application deployed on Render + Docker container.</h2>
+    <h3>Designed by Nandakumar Jyothi, DevOps Engineer.</h3>
     """
 
 if __name__ == "__main__":

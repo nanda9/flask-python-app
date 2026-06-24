@@ -24,13 +24,13 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest .
-
+      
       - name: Run Container Test
         run: |
           docker run -d -p 5000:5000 --name test-app \
           ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
 
-          sleep 10
+          sleep 5
 
           docker ps
 
@@ -42,6 +42,5 @@ jobs:
       
       - name: Verify Application
         run: |
-          sleep 20
-        
-          curl http://localhost:5000
+          sleep 10
+          curl --fail http://localhost:5000
