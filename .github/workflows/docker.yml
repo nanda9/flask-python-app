@@ -28,7 +28,7 @@ jobs:
       - name: Run Container Test
         run: |
           docker run -d -p 5000:5000 --name test-app \
-          ${{ secrets.DOCKERHUB_PASSWORD }}/my-python-app:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
 
           sleep 5
 
