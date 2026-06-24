@@ -11,5 +11,10 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t my-python-app .
+
+      - name: Run Docker image
+        run: docker run -d -p 5000:5000 my-python-app 
+
+      - name: Check Running Containers
+        run: docker ps
         
-    
