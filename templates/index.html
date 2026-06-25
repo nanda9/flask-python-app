@@ -65,62 +65,9 @@
 
     <h1>🚀 CI/CD DevOps Pipeline</h1>
     <h2>GitHub → Docker → ArgoCD → Kubernetes</h2>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>CI/CD DevOps App</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f6f9;
-        }
 
-        .header {
-            background-color: #1f4e79;
-            color: white;
-            padding: 20px;
-        }
-
-        .container {
-            margin-top: 30px;
-        }
-
-        .logo {
-            width: 180px;
-            margin: 20px;
-        }
-
-        .card {
-            display: inline-block;
-            background: white;
-            padding: 20px;
-            margin: 15px;
-            border-radius: 10px;
-            box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
-            width: 250px;
-        }
-
-        .card img {
-            width: 100%;
-            border-radius: 10px;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="header">
-        <h1>🚀 CI/CD Docker + ArgoCD + Kubernetes</h1>
-        <h3>Auto Deployment with Every Git Push</h3>
-    </div>
-
-    <div class="container">
-
-        <!-- Logo -->
-        <img class="logo" src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
-
+    <div class="box">
+      
         <h2>DevOps Pipeline Overview</h2>
 
         <!-- Cards with images -->
@@ -131,12 +78,12 @@
 
         <div class="card">
             <img src="{{ url_for('static', filename='docker.png') }}" alt="Docker">
-            <p>Docker Container image is built and pushed to registry</p>
+            <p>Docker image is built and pushed to registry</p>
         </div>
 
         <div class="card">
             <img src="{{ url_for('static', filename='argocd.png') }}" alt="ArgoCD">
-            <p>ArgoCD GitOps Deployment syncs Kubernetes cluster automatically</p>
+            <p>ArgoCD syncs Kubernetes cluster automatically</p>
         </div>
 
         <div class="card">
@@ -144,6 +91,7 @@
             <p>Kubernetes Orchestration Pods update without manual intervention</p>
         </div>
 
+    </div>
     <div class="box">
       <h3>Technology Stack</h3>
       <div>
