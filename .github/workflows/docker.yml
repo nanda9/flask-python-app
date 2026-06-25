@@ -1,4 +1,4 @@
-name: CI/CD Pipeline Git Push to Docker to Kubernetes
+name: CI/CD Pipeline Git Push --> Docker --> Kubernetes
 
 on:
   push:
@@ -26,12 +26,12 @@ jobs:
       # 4. Build Docker Image
       - name: Build Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest .
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:v2 .
       
       # 5. Push Image
       - name: Push Image to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:v2
       
       # 6. Deploy to Kubernetes
       - name: Deploy to Kubernetes
