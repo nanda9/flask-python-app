@@ -1,46 +1,42 @@
-name: Docker CI Pipeline
+name: CI/CD Pipeline Git Push to Docker to Kubernetes
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # 2. Set up Docker
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # 3. Login to Docker Hub
       - name: Login to Docker Hub
         run: |
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | \
           docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
+      # 4. Build Docker Image
       - name: Build Docker Image
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest .
       
-      - name: Run Container Test
-        run: |
-          docker run -d -p 5000:5000 --name test-app \
-          ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
-
-          sleep 5
-
-          docker ps
-
-          docker logs test-app
-
+      # 5. Push Image
       - name: Push Image to Docker Hub
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
       
-      - name: Verify Application
+      # 6. Deploy to Kubernetes
+      - name: Deploy to Kubernetes
         run: |
-          sleep 10
-          curl --fail http://localhost:5000
+          echo "Applying Kubernetes manifests...."
+          kubectl apply -f deployment.yaml
+          kubectl rollout restart deployment flask-deployment
+          
