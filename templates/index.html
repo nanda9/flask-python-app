@@ -62,35 +62,19 @@
 <body>
 
   <div class="container">
-
     <h1>🚀 CI/CD DevOps Pipeline</h1>
     <h2>GitHub → Docker → ArgoCD → Kubernetes</h2>
-
-    <div class="box">
-      
-        <h2>DevOps Pipeline Overview</h2>
-
-        <!-- Cards with images -->
-        <div class="card">
+    <h2>DevOps Pipeline Overview</h2>
+        <div class="box">
             <img src="{{ url_for('static', filename='github.png') }}" alt="GitHub">
-            <p>Every <span class="highlight">Git Push</span> triggers automatic deployment</p>
-        </div>
-
-        <div class="card">
+            <p>Every <span class="highlight">Git Push</span> triggers automatic deployment</p>  
             <img src="{{ url_for('static', filename='docker.png') }}" alt="Docker">
             <p>Docker image is built and pushed to registry</p>
-        </div>
-
-        <div class="card">
             <img src="{{ url_for('static', filename='argocd.png') }}" alt="ArgoCD">
             <p>ArgoCD syncs Kubernetes cluster automatically</p>
-        </div>
-
-        <div class="card">
             <img src="{{ url_for('static', filename='kubernetes.png') }}" alt="Kubernetes">
             <p>Kubernetes Orchestration Pods update without manual intervention</p>
         </div>
-
     </div>
     <div class="box">
       <h3>Technology Stack</h3>
