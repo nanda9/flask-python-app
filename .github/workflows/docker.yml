@@ -33,7 +33,8 @@ jobs:
       # 5. Update Kubernetes deployment.yaml with new image
       - name: Update deployment image tag
         run: |
-          sed -i "s|PLACEHOLDER|${{ github.sha }}|g" deployment.yaml
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:${GITHUB_SHA}
+          sed -i "s|IMAGE_TAG|$IMAGE|g" deployment.yaml
 
       # 6. Commit updated YAML back to repo
       - name: Commit changes
