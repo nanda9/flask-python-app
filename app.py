@@ -5,7 +5,7 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return """
-    <h1> Hello from Kubernetes, Hello from Docker!, Hello from ArgoCD!  CI/CD Docker Pipeline Running! </h1>
+    <h1> CI/CD Docker Pipeline Running! </h1>
     <h2> This is my First local host application deployed on Docker minikube cluster. </h2>
     <h3> Designed by Nandakumar Jyothi, DevOps Engineer. </h3>
     """

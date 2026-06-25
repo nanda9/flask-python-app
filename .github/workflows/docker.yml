@@ -1,8 +1,8 @@
-name: CI/CD Pipeline Git Push --> Docker --> Kubernetes
+name: CI/CD to ArgoCD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build-and-deploy:
@@ -10,33 +10,36 @@ jobs:
 
     steps:
       # 1. Checkout code
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Set up Docker
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # 3. Login to Docker Hub
+      # 2. Login to Docker Hub
       - name: Login to Docker Hub
         run: |
-          echo "${{ secrets.DOCKERHUB_PASSWORD }}" | \
-          docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      # 4. Build Docker Image
-      - name: Build Docker Image
+      # 3. Build Docker image (tag = Git SHA)
+      - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:v2 .
-      
-      # 5. Push Image
-      - name: Push Image to Docker Hub
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:${{ github.sha }}
+          docker build -t $IMAGE .
+
+      # 4. Push Docker image
+      - name: Push Docker image
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:v2
-      
-      # 6. Deploy to Kubernetes
-      - name: Deploy to Kubernetes
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:${{ github.sha }}
+          docker push $IMAGE
+
+      # 5. Update Kubernetes deployment.yaml with new image
+      - name: Update deployment image tag
         run: |
-          echo "Applying Kubernetes manifests...."
-          kubectl apply -f deployment.yaml
-          kubectl rollout restart deployment flask-deployment
-          
+          sed -i "s|PLACEHOLDER|${{ github.sha }}|g" deployment.yaml
+
+      # 6. Commit updated YAML back to repo
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add deployment.yaml
+          git commit -m "Update image to ${{ github.sha }}" || echo "No changes"
+          git push
