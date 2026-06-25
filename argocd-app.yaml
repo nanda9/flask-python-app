@@ -3,12 +3,15 @@ kind: Application
 metadata:
   name: my-python-app
   namespace: argocd
-
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: flask=nandadocker23/my-python-app
+    argocd-image-updater.argoproj.io/flask.update-strategy: latest
+    argocd-image-updater.argoproj.io/write-back-method: git
 spec:
   project: default
 
   source:
-    repoURL: https://github.com/nanda9/flask-python-app.git
+    repoURL: https://github.com/abcd/flask-python-app.git
     targetRevision: main
     path: .
 

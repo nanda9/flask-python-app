@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
+      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -25,11 +25,11 @@ jobs:
           docker build -t $IMAGE .
           docker push $IMAGE
 
-      # 4. Update deployment.yaml
-      - name: Update image tag in deployment.yaml
+      # 4. Update deployment.yaml (IMPORTANT FIX)
+      - name: Update deployment image
         run: |
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:${{ github.sha }}
-          sed -i "s|IMAGE_TAG|${{ github.sha }}|g" deployment.yaml
+          sed -i "s|image: .*|image: $IMAGE|g" deployment.yaml
 
       # 5. Commit changes
       - name: Commit changes
