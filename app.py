@@ -7,7 +7,7 @@ def home():
     return """
     <h1>End-to-End DevOps Project: CI/CD with Docker, Kubernetes & ArgoCD</h1>
     <h2>Automated Deployment Triggered by Git Push</h2>
-    <h3>Designed by nandakumar Jyothi | DevOps Engineer</h3>
+    <h3>Designed by Nandakumar Jyothi | DevOps Engineer</h3>
     """
     
 if __name__ == "__main__":
