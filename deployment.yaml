@@ -14,5 +14,5 @@ spec:
     spec:
       containers:
       - name: flask
-        image: nandadocker23/my-python-app:IMAGE_TAG
+        image: nandadocker23/my-python-app:nandadocker23/my-python-app:de221b50a0bb2a94f39784e64c5f0884f270335f
         imagePullPolicy: Always
