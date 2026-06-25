@@ -29,7 +29,7 @@ jobs:
       - name: Update image tag in deployment.yaml
         run: |
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:${{ github.sha }}
-          sed -i "s|IMAGE_TAG|$IMAGE|g" deployment.yaml
+          sed -i "s|IMAGE_TAG|${{ github.sha }}|g" deployment.yaml
 
       # 5. Commit changes
       - name: Commit changes
