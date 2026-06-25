@@ -11,7 +11,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/abcd/flask-python-app.git
+    repoURL: https://github.com/nanda9/flask-python-app.git
     targetRevision: main
     path: .
 
