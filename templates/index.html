@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>DevOps CI/CD Pipeline</title>
+
   <style>
     body {
       margin: 0;
@@ -13,7 +14,7 @@
     }
 
     .container {
-      padding: 80px 20px;
+      padding: 60px 20px;
     }
 
     h1 {
@@ -23,16 +24,16 @@
     }
 
     h2 {
-      font-size: 24px;
+      font-size: 22px;
       color: #a5f3fc;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     .box {
       background: rgba(255,255,255,0.08);
-      padding: 20px;
+      padding: 25px;
       margin: 20px auto;
-      width: 70%;
+      width: 75%;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(0,0,0,0.3);
     }
@@ -56,6 +57,20 @@
       background: #334155;
       font-size: 12px;
     }
+
+    /* 🚀 IMAGE FIX (IMPORTANT) */
+    .box img {
+      width: 55px;
+      height: 55px;
+      object-fit: contain;
+      margin: 10px;
+      transition: 0.3s;
+    }
+
+    .box img:hover {
+      transform: scale(1.15);
+    }
+
   </style>
 </head>
 
@@ -66,32 +81,31 @@
     <h1>🚀 CI/CD DevOps Pipeline</h1>
     <h2>GitHub → Docker → ArgoCD → Kubernetes</h2>
 
+    <!-- PIPELINE SECTION -->
     <div class="box">
       
         <h2>DevOps Pipeline Overview</h2>
 
         <!-- Cards with images -->
         <div class="card">
-            <img src="{{ url_for('static', filename='github.png') }}" alt="GitHub"><p>Every Git Push triggers automatic deployment</p>>
-
+            <img src="{{ url_for('static', filename='github.png') }}" alt="GitHub">
+            <p>Every <span class="highlight">Git Push</span> triggers automatic deployment</p>
         </div>
 
         <div class="card">
             <img src="{{ url_for('static', filename='docker.png') }}" alt="Docker">
-            <p>Docker Image is built and pushed to registry</p>
+            <p>Docker image is built and pushed to registry</p>
         </div>
 
-        <div class="card">
-            <img src="{{ url_for('static', filename='argocd.png') }}" alt="ArgoCD">
-            <p>ArgoCD syncs Kubernetes cluster automatically</p>
-        </div>
+      <img src="{{ url_for('static', filename='argocd.png') }}" alt="ArgoCD">
+      <p>ArgoCD syncs Kubernetes cluster automatically</p>
 
-        <div class="card">
-            <img src="{{ url_for('static', filename='kubernetes.png') }}" alt="Kubernetes">
-            <p>Kubernetes Orchestration Pods update without manual intervention</p>
-        </div>
+      <img src="{{ url_for('static', filename='kubernetes.png') }}" alt="Kubernetes">
+      <p>Kubernetes pods update without manual intervention</p>
 
     </div>
+
+    <!-- TECH STACK -->
     <div class="box">
       <h3>Technology Stack</h3>
       <div>
@@ -104,6 +118,7 @@
       </div>
     </div>
 
+    <!-- STATUS -->
     <div class="box">
       <h3>Deployment Status</h3>
       <p>✅ Running on Kubernetes Cluster</p>
@@ -111,6 +126,7 @@
       <p>✅ Auto Sync Enabled via ArgoCD</p>
     </div>
 
+    <!-- FOOTER -->
     <div class="footer">
       Designed by Nandakumar Jyothi | DevOps Engineer 🚀
     </div>
