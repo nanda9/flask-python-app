@@ -51,12 +51,18 @@
         }
 
         .pipeline-step img {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             object-fit: contain;
             background: white;
             border-radius: 8px;
             padding: 5px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .pipeline-step img:hover {
+            transform: scale(1.15);
         }
 
         .pipeline-step p {
@@ -90,6 +96,10 @@
             font-size: 15px;
         }
 
+        a {
+            text-decoration: none;
+        }
+
     </style>
 </head>
 
@@ -100,30 +110,44 @@
     <h1>🚀 CI/CD DevOps Pipeline</h1>
     <h2>GitHub → Docker → ArgoCD → Kubernetes</h2>
 
+    <!-- PIPELINE -->
     <div class="box">
 
         <div class="pipeline-step">
-            <img src="{{ url_for('static', filename='github.png') }}" alt="GitHub">
-            <p>Git Push triggers the GitHub Actions CI/CD pipeline.</p>
+            <a href="https://github.com/nanda9/flask-python-app" target="_blank">
+                <img src="{{ url_for('static', filename='github.png') }}" alt="GitHub">
+            </a>
+            <p><strong>GitHub</strong><br>
+            Every <span class="highlight">Git Push</span> triggers CI/CD pipeline.</p>
         </div>
 
         <div class="pipeline-step">
-            <img src="{{ url_for('static', filename='docker.png') }}" alt="Docker">
-            <p>Docker builds the application image and pushes it to Docker Hub.</p>
+            <a href="https://hub.docker.com/r/nandadocker23/my-python-app" target="_blank">
+                <img src="{{ url_for('static', filename='docker.png') }}" alt="Docker">
+            </a>
+            <p><strong>Docker Hub</strong><br>
+            Docker builds and pushes the image.</p>
         </div>
 
         <div class="pipeline-step">
-            <img src="{{ url_for('static', filename='argocd.png') }}" alt="ArgoCD">
-            <p>ArgoCD monitors the Git repository and synchronizes the Kubernetes cluster.</p>
+            <a href="https://argo-cd.readthedocs.io/" target="_blank">
+                <img src="{{ url_for('static', filename='argocd.png') }}" alt="ArgoCD">
+            </a>
+            <p><strong>ArgoCD</strong><br>
+            Syncs Git repo with Kubernetes cluster.</p>
         </div>
 
         <div class="pipeline-step">
-            <img src="{{ url_for('static', filename='kubernetes.png') }}" alt="Kubernetes">
-            <p>Kubernetes performs a rolling update and deploys the latest application version.</p>
+            <a href="https://kubernetes.io/" target="_blank">
+                <img src="{{ url_for('static', filename='kubernetes.png') }}" alt="Kubernetes">
+            </a>
+            <p><strong>Kubernetes</strong><br>
+            Deploys latest application version.</p>
         </div>
 
     </div>
 
+    <!-- STACK -->
     <div class="box">
 
         <h3>🛠 Technology Stack</h3>
@@ -139,6 +163,7 @@
 
     </div>
 
+    <!-- STATUS -->
     <div class="box status">
 
         <h3>✅ Deployment Status</h3>
@@ -150,6 +175,7 @@
 
     </div>
 
+    <!-- FOOTER -->
     <div class="footer">
         <h3>Designed & Developed by <span class="highlight">Nandakumar Jyothi</span></h3>
         <p>DevOps Engineer | CI/CD • Docker • Kubernetes • ArgoCD • GitHub Actions</p>
