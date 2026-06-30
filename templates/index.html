@@ -5,312 +5,252 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DevOps Dashboard</title>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0b1220;
+    color: white;
 }
 
-body{
-    background:#0b1220;
-    color:white;
+header {
+    background: #111827;
+    padding: 20px;
+    text-align: center;
 }
 
-header{
-    background:#111827;
-    padding:20px;
-    text-align:center;
-    border-bottom:2px solid #1f2937;
+header h1 {
+    color: #3b82f6;
 }
 
-header h1{
-    color:#3b82f6;
+.container {
+    width: 95%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
 }
 
-header p{
-    color:#9ca3af;
-    margin-top:8px;
+/* CARDS */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 20px;
+    margin-top: 20px;
 }
 
-.container{
-    width:95%;
-    max-width:1200px;
-    margin:25px auto;
+.card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
 }
 
-.cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:20px;
+/* PIPELINE */
+.section {
+    margin-top: 30px;
+    background: #111827;
+    padding: 20px;
+    border-radius: 12px;
 }
 
-.card{
-    background:#1e293b;
-    border-radius:12px;
-    padding:20px;
-    text-align:center;
-    box-shadow:0 4px 15px rgba(0,0,0,.4);
+.pipeline-step {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 15px 0;
+    background: #1e293b;
+    padding: 12px;
+    border-radius: 10px;
 }
 
-.card h2{
-    font-size:32px;
-    color:#22c55e;
-    margin:10px 0;
+.pipeline-step img {
+    width: 55px;
+    height: 55px;
+    background: white;
+    padding: 5px;
+    border-radius: 8px;
 }
 
-.card p{
-    color:#cbd5e1;
+/* BADGES */
+.badge {
+    display: inline-block;
+    background: #334155;
+    padding: 6px 12px;
+    margin: 5px;
+    border-radius: 20px;
 }
 
-.section{
-    background:#111827;
-    margin-top:30px;
-    border-radius:12px;
-    padding:25px;
+/* CHARTS */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    gap: 20px;
 }
 
-.section h2{
-    color:#38bdf8;
-    margin-bottom:20px;
+canvas {
+    background: #1e293b;
+    padding: 10px;
+    border-radius: 10px;
 }
 
-.pipeline-step{
-    display:flex;
-    align-items:center;
-    gap:20px;
-    margin-bottom:20px;
-    padding:15px;
-    background:#1e293b;
-    border-radius:10px;
-}
-
-.pipeline-step img{
-    width:60px;
-    height:60px;
-    background:white;
-    padding:5px;
-    border-radius:8px;
-    transition:.3s;
-}
-
-.pipeline-step img:hover{
-    transform:scale(1.1);
-}
-
-.pipeline-step p{
-    font-size:18px;
-}
-
-.pipeline-step a{
-    text-decoration:none;
-}
-
-.badges{
-    margin-top:20px;
-}
-
-.badge{
-    display:inline-block;
-    background:#2563eb;
-    color:white;
-    padding:8px 15px;
-    border-radius:20px;
-    margin:6px;
-}
-
-.status{
-    display:flex;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:15px;
-}
-
-.status-box{
-    flex:1;
-    min-width:200px;
-    background:#1e293b;
-    padding:20px;
-    border-radius:10px;
-    text-align:center;
-}
-
-.green{
-    color:#22c55e;
-    font-size:22px;
-}
-
-footer{
-    margin-top:40px;
-    text-align:center;
-    color:#94a3b8;
-    padding:20px;
+footer {
+    text-align: center;
+    color: #94a3b8;
+    margin-top: 40px;
+    padding: 20px;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <header>
-
-<h1>🚀 DevOps Dashboard</h1>
-
-<p>
-GitHub → GitHub Actions → Docker Hub → ArgoCD → Kubernetes
-</p>
-
+<h1>🚀 DevOps Grafana-Style Dashboard</h1>
+<p>GitHub → Docker → ArgoCD → Kubernetes</p>
 </header>
 
 <div class="container">
 
+<!-- CARDS -->
 <div class="cards">
 
 <div class="card">
-<h3>Pods</h3>
-<h2>3</h2>
-<p>Running</p>
+<h2 id="pods">3</h2>
+<p>Pods Running</p>
 </div>
 
 <div class="card">
-<h3>Docker Images</h3>
-<h2>Latest</h2>
-<p>Successfully Pushed</p>
+<h2 id="cpu">--</h2>
+<p>CPU %</p>
 </div>
 
 <div class="card">
-<h3>ArgoCD</h3>
-<h2>Healthy</h2>
-<p>Auto Sync Enabled</p>
+<h2 id="mem">--</h2>
+<p>Memory %</p>
 </div>
 
 <div class="card">
-<h3>Pipeline</h3>
-<h2>Success</h2>
-<p>GitHub Actions</p>
+<h2 id="commit">---</h2>
+<p>Git Commit</p>
 </div>
 
 </div>
 
+<!-- PIPELINE -->
 <div class="section">
 
 <h2>⚡ CI/CD Pipeline</h2>
 
 <div class="pipeline-step">
-
-<a href="https://github.com/nanda9/flask-python-app" target="_blank">
 <img src="{{ url_for('static', filename='github.png') }}">
-</a>
-
-<p>
-<b>GitHub</b><br>
-Every Git Push triggers the CI/CD workflow.
-</p>
-
+<p>GitHub → Code Push triggers pipeline</p>
 </div>
 
 <div class="pipeline-step">
-
-<a href="https://hub.docker.com/r/nandadocker23/my-python-app" target="_blank">
 <img src="{{ url_for('static', filename='docker.png') }}">
-</a>
-
-<p>
-<b>Docker Hub</b><br>
-Builds and publishes the latest Docker image.
-</p>
-
+<p>Docker builds and pushes image</p>
 </div>
 
 <div class="pipeline-step">
-
-<a href="https://argo-cd.readthedocs.io/" target="_blank">
 <img src="{{ url_for('static', filename='argocd.png') }}">
-</a>
-
-<p>
-<b>ArgoCD</b><br>
-Automatically synchronizes your Kubernetes cluster.
-</p>
-
+<p>ArgoCD syncs Kubernetes cluster</p>
 </div>
 
 <div class="pipeline-step">
-
-<a href="https://kubernetes.io/" target="_blank">
 <img src="{{ url_for('static', filename='kubernetes.png') }}">
-</a>
-
-<p>
-<b>Kubernetes</b><br>
-Performs rolling updates and deploys the newest version.
-</p>
-
+<p>Kubernetes deploys application</p>
 </div>
 
 </div>
 
+<!-- CHARTS -->
 <div class="section">
 
-<h2>🛠 Technology Stack</h2>
+<h2>📊 Metrics</h2>
 
-<div class="badges">
+<div class="grid">
+
+<canvas id="cpuChart"></canvas>
+<canvas id="memChart"></canvas>
+
+</div>
+
+</div>
+
+<!-- STACK -->
+<div class="section">
+
+<h2>🛠 Tech Stack</h2>
 
 <span class="badge">Flask</span>
-<span class="badge">GitHub</span>
-<span class="badge">GitHub Actions</span>
 <span class="badge">Docker</span>
-<span class="badge">Docker Hub</span>
-<span class="badge">ArgoCD</span>
 <span class="badge">Kubernetes</span>
+<span class="badge">ArgoCD</span>
+<span class="badge">GitHub Actions</span>
 <span class="badge">Minikube</span>
 
 </div>
 
 </div>
 
-<div class="section">
+<script>
 
-<h2>📊 Cluster Health</h2>
+let cpuChart = new Chart(document.getElementById("cpuChart"), {
+    type: "line",
+    data: {
+        labels: [],
+        datasets: [{
+            label: "CPU %",
+            data: [],
+            borderColor: "blue"
+        }]
+    }
+});
 
-<div class="status">
+let memChart = new Chart(document.getElementById("memChart"), {
+    type: "line",
+    data: {
+        labels: [],
+        datasets: [{
+            label: "Memory %",
+            data: [],
+            borderColor: "green"
+        }]
+    }
+});
 
-<div class="status-box">
-<div class="green">🟢 Healthy</div>
-<p>ArgoCD</p>
-</div>
+function update(){
 
-<div class="status-box">
-<div class="green">🟢 Running</div>
-<p>Kubernetes Pods</p>
-</div>
+    let cpu = Math.floor(Math.random()*100);
+    let mem = Math.floor(Math.random()*100);
+    let time = new Date().toLocaleTimeString();
 
-<div class="status-box">
-<div class="green">🟢 Active</div>
-<p>GitHub Actions</p>
-</div>
+    document.getElementById("cpu").innerText = cpu + "%";
+    document.getElementById("mem").innerText = mem + "%";
+    document.getElementById("commit").innerText = "a1b2c3d4";
 
-<div class="status-box">
-<div class="green">🟢 Available</div>
-<p>Docker Image</p>
-</div>
+    cpuChart.data.labels.push(time);
+    cpuChart.data.datasets[0].data.push(cpu);
 
-</div>
+    memChart.data.labels.push(time);
+    memChart.data.datasets[0].data.push(mem);
 
-</div>
+    cpuChart.update();
+    memChart.update();
+}
+
+setInterval(update, 5000);
+update();
+
+</script>
 
 <footer>
-
-<h3>Designed & Developed by Nandakumar Jyothi</h3>
-
-<p>DevOps Engineer | GitHub • Docker • Kubernetes • ArgoCD • GitHub Actions</p>
-
+Designed by Nandakumar Jyothi | DevOps Engineer 🚀
 </footer>
-
-</div>
 
 </body>
 </html>
