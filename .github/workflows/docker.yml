@@ -4,6 +4,9 @@ on:
   push:
     branches: ["main"]
 
+permissions:
+  contents: write   # required so the workflow can git push back
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -18,26 +21,29 @@ jobs:
         run: |
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      # 3. Build + push image
+      # 3. Compute image tag once, persist across steps
+      - name: Set image tag
+        run: |
+          echo "IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:${{ github.sha }}" >> "$GITHUB_ENV"
+
+      # 4. Build + push image
       - name: Build and Push Docker image
         run: |
-          echo "The value of GitHub SHA is: ${{ github.sha }}"
-          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:${{ github.sha }}
-          docker build -t $IMAGE .
-          docker push $IMAGE
+          echo "Building image: $IMAGE"
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
 
-      # 4. Update deployment.yaml (IMPORTANT FIX)
+      # 5. Update deployment.yaml
       - name: Update deployment image
         run: |
-          echo "The value of GitHub SHA is: ${IMAGE}"
-          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:${{ github.sha }}
+          echo "Updating deployment.yaml to use: $IMAGE"
           sed -i "s|image: .*|image: $IMAGE|g" deployment.yaml
 
-      # 5. Commit changes
+      # 6. Commit changes
       - name: Commit changes
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add deployment.yaml
-          git commit -m "Update image to ${{ github.sha }}" || echo "No changes"
+          git commit -m "Update image to ${{ github.sha }}" || echo "No changes to commit"
           git push
