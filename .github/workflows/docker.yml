@@ -21,7 +21,7 @@ jobs:
       # 3. Build + push image
       - name: Build and Push Docker image
         run: |
-          echo "The value of GitHub SHA is: ${github.sha }"
+          echo "The value of GitHub SHA is: ${{ github.sha }}"
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:${{ github.sha }}
           docker build -t $IMAGE .
           docker push $IMAGE
@@ -29,6 +29,7 @@ jobs:
       # 4. Update deployment.yaml (IMPORTANT FIX)
       - name: Update deployment image
         run: |
+          echo "The value of GitHub SHA is: ${IMAGE}"
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:${{ github.sha }}
           sed -i "s|image: .*|image: $IMAGE|g" deployment.yaml
 
