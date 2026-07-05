@@ -21,7 +21,7 @@ jobs:
       # 3. Build + push image
       - name: Build and Push Docker image
         run: |
-          RUN echo "The value of GitHub SHA is: ${github.sha }"
+          echo "The value of GitHub SHA is: ${github.sha }"
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:${{ github.sha }}
           docker build -t $IMAGE .
           docker push $IMAGE
