@@ -17,7 +17,7 @@ spec:
   source:
     repoURL: https://github.com/nanda9/flask-python-app.git
     targetRevision: main
-    path: kubernetes
+    path: GitOps-Repo
 
 
   destination:
