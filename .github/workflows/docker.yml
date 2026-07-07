@@ -3,10 +3,6 @@ name: CI/CD to ArgoCD
 on:
   push:
     branches: ["main"]
-    paths:
-      - "app.py"
-      - "Dockerfile"
-      - "requirements.txt"
 
 permissions:
   contents: write   # required so the workflow can git push back
