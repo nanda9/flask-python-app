@@ -3,14 +3,7 @@ name: Build Docker Image
 on:
   push:
     branches: ["main"]
-    paths:
-      - "app.py"
-      - "dockerfile"
-      - "requirements.txt"
-      - "templates/**"
-      - "static/**"
-      - "README.md"
-
+    
 permissions:
   contents: write   # required so the workflow can git push back
 
