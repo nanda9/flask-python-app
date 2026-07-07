@@ -3,6 +3,10 @@ name: CI/CD to ArgoCD
 on:
   push:
     branches: ["main"]
+    paths:
+      - "app.py"
+      - "Dockerfile"
+      - "requirements.txt"
 
 permissions:
   contents: write   # required so the workflow can git push back
@@ -37,7 +41,7 @@ jobs:
       - name: Update deployment image
         run: |
           echo "Updating deployment.yaml to use: $IMAGE"
-          sed -i "s|image: .*|image: $IMAGE|g" deployment.yaml
+          sed -i "s|image: nandadocker23/my-python-app:.*|image: $IMAGE|g" deployment.yaml
 
       # 6. Commit changes
       - name: Commit changes
