@@ -39,3 +39,26 @@ jobs:
           echo "Building image: $IMAGE"
           docker build -t "$IMAGE" .
           docker push "$IMAGE"
+      
+      # 5. Update Kubernetes deployment.yaml
+      - name: Update Kubernetes Image
+        run: |
+          echo "Updating deployment.yaml"
+
+          sed -i "s|image: .*|image: $IMAGE|g" GitOps-Repo/deployment.yaml
+
+          cat GitOps-Repo/deployment.yaml
+
+      # 6. Commit GitOps change
+      - name: Commit Kubernetes manifest
+        run: |
+
+          git config user.name "github-actions"
+
+          git config user.email "github-actions@github.com"
+
+          git add GitOps-Repo/deployment.yaml
+
+          git commit -m "Update image to ${{ github.sha }}" || echo "No changes"
+
+          git push
