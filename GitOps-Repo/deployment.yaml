@@ -1,35 +1,66 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: flask-deployment
   namespace: dev
+
 spec:
   replicas: 3
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+
   selector:
     matchLabels:
       app: flask
+
   template:
     metadata:
       labels:
         app: flask
+
     spec:
       containers:
       - name: flask
+
         image: nandadocker23/my-python-app:1fa535571db18b069564f9a0f65c24331628e30b
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
+
         ports:
         - containerPort: 5000
 
+        envFrom:
+        - configMapRef:
+            name: flask-config
+        - secretRef:
+            name: flask-secret
+
         readinessProbe:
-            httpGet:
-              path: /health
-              port: 5000
-            initialDelaySeconds: 5
-            periodSeconds: 10
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
 
         livenessProbe:
-            httpGet:
-              path: /health
-              port: 5000
-            initialDelaySeconds: 15
-            periodSeconds: 20
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
