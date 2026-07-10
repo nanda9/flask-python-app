@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: flask
-        image: nandadocker23/my-python-app:682dcef3a5d23b5beb7e4240142185cc4a0e8a22
+        image: nandadocker23/my-python-app:1fa535571db18b069564f9a0f65c24331628e30b
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
