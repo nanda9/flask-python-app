@@ -16,7 +16,10 @@ def home():
 
     # Get Kubernetes pod information
     try:
-        config.load_incluster_config()
+        try:
+            config.load_incluster_config()
+        except:
+            config.load_kube_config()
 
         v1 = client.CoreV1Api()
 
@@ -33,6 +36,7 @@ def home():
         pod_count = len(running_pods)
 
     except Exception as e:
+        print("Kubernetes Error:", e)
         pod_count = "N/A"
 
     return render_template(
