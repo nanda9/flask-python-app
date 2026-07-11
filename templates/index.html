@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>DevOps CI/CD Dashboard</title>
 
 <style>
@@ -41,11 +43,13 @@ header p{
     margin:25px auto;
 }
 
+
 .cards{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
     gap:20px;
 }
+
 
 .card{
     background:#1e293b;
@@ -55,15 +59,24 @@ header p{
     box-shadow:0 4px 15px rgba(0,0,0,.4);
 }
 
+
 .card h2{
     font-size:32px;
     color:#22c55e;
     margin:10px 0;
 }
 
+
 .card p{
     color:#cbd5e1;
 }
+
+
+.hostname{
+    font-size:14px !important;
+    word-break:break-all;
+}
+
 
 .section{
     background:#111827;
@@ -72,10 +85,12 @@ header p{
     padding:25px;
 }
 
+
 .section h2{
     color:#448faf;
     margin-bottom:20px;
 }
+
 
 .pipeline-step{
     display:flex;
@@ -87,30 +102,30 @@ header p{
     border-radius:10px;
 }
 
+
 .pipeline-step img{
     width:60px;
     height:60px;
     background:white;
     padding:5px;
     border-radius:8px;
-    transition:.3s;
 }
 
-.pipeline-step img:hover{
-    transform:scale(1.1);
-}
 
 .pipeline-step p{
     font-size:18px;
 }
 
+
 .pipeline-step a{
     text-decoration:none;
 }
 
+
 .badges{
     margin-top:20px;
 }
+
 
 .badge{
     display:inline-block;
@@ -121,12 +136,14 @@ header p{
     margin:6px;
 }
 
+
 .status{
     display:flex;
     justify-content:space-between;
     flex-wrap:wrap;
     gap:15px;
 }
+
 
 .status-box{
     flex:1;
@@ -137,10 +154,12 @@ header p{
     text-align:center;
 }
 
+
 .green{
     color:#22c55e;
     font-size:22px;
 }
+
 
 footer{
     margin-top:40px;
@@ -153,166 +172,474 @@ footer{
 
 </head>
 
+
 <body>
+
 
 <header>
 
 <h1>🚀 DevOps Complete CI/CD Dashboard</h1>
+
 <h1>{{ app_name }}</h1>
-<p>Environment: {{ app_env }}</p>
-<p>Company: {{ company }}</p>
+
+<p>
+Environment: {{ app_env }}
+</p>
+
+<p>
+Company: {{ company }}
+</p>
+
 <p>
 GitHub → GitHub Actions → Docker Hub → ArgoCD → Kubernetes
 </p>
 
 </header>
 
+
+
 <div class="container">
+
+
+<!-- MAIN DASHBOARD CARDS -->
 
 <div class="cards">
 
+
 <div class="card">
+
 <h3>Pods</h3>
-<h2>3</h2>
-<p>Running</p>
+
+<h2>
+{{ pod_count }}
+</h2>
+
+<p>
+Running Kubernetes Pods
+</p>
+
 </div>
 
+
+
 <div class="card">
+
+<h3>Current Pod</h3>
+
+<h2 class="hostname">
+{{ hostname }}
+</h2>
+
+<p>
+Serving Request
+</p>
+
+</div>
+
+
+
+<div class="card">
+
 <h3>Docker Images</h3>
-<h2>Latest</h2>
-<p>Successfully Pushed</p>
+
+<h2>
+Latest
+</h2>
+
+<p>
+Successfully Pushed
+</p>
+
 </div>
 
+
+
 <div class="card">
+
 <h3>ArgoCD</h3>
-<h2>Healthy</h2>
-<p>Auto Sync Enabled</p>
+
+<h2>
+Healthy
+</h2>
+
+<p>
+Auto Sync Enabled
+</p>
+
 </div>
+
+
 
 <div class="card">
+
 <h3>Pipeline</h3>
-<h2>Success</h2>
-<p>GitHub Actions</p>
-</div>
+
+<h2>
+Success
+</h2>
+
+<p>
+GitHub Actions
+</p>
 
 </div>
+
+
+</div>
+
+
+
+
+
+<!-- KUBERNETES INFORMATION -->
 
 <div class="section">
 
-<h2>⚡ CI/CD Pipeline</h2>
+
+<h2>
+☸️ Kubernetes Information
+</h2>
+
+
+<div class="status">
+
+
+<div class="status-box">
+
+<div class="green">
+{{ pod_count }}
+</div>
+
+<p>
+Running Pods
+</p>
+
+</div>
+
+
+
+<div class="status-box">
+
+<div class="green">
+{{ namespace }}
+</div>
+
+<p>
+Namespace
+</p>
+
+</div>
+
+
+
+<div class="status-box">
+
+<div class="green">
+{{ hostname }}
+</div>
+
+<p>
+Current Pod
+</p>
+
+</div>
+
+
+
+<div class="status-box">
+
+<div class="green">
+🟢 Enabled
+</div>
+
+<p>
+HPA Autoscaling
+</p>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<!-- CI/CD PIPELINE -->
+
+<div class="section">
+
+
+<h2>
+⚡ CI/CD Pipeline
+</h2>
+
+
 
 <div class="pipeline-step">
 
 <a href="https://github.com/nanda9/flask-python-app" target="_blank">
+
 <img src="{{ url_for('static', filename='github.png') }}">
+
 </a>
 
+
 <p>
+
 <b>GitHub</b><br>
-Every Git Push triggers the CI/CD workflow.
+
+Every Git Push triggers CI/CD workflow.
+
 </p>
 
+
 </div>
+
+
+
+
 
 <div class="pipeline-step">
 
 <a href="https://hub.docker.com/r/nandadocker23/my-python-app" target="_blank">
+
 <img src="{{ url_for('static', filename='docker.png') }}">
+
 </a>
 
+
 <p>
+
 <b>Docker Hub</b><br>
-Builds and publishes the latest Docker image.
+
+Builds and publishes Docker image.
+
 </p>
 
+
 </div>
+
+
+
+
 
 <div class="pipeline-step">
 
 <a href="https://argo-cd.readthedocs.io/" target="_blank">
+
 <img src="{{ url_for('static', filename='argocd.png') }}">
+
 </a>
 
+
 <p>
+
 <b>ArgoCD</b><br>
-Automatically synchronizes your Kubernetes cluster.
+
+Automatically synchronizes Kubernetes.
+
 </p>
 
+
 </div>
+
+
+
+
 
 <div class="pipeline-step">
 
 <a href="https://kubernetes.io/" target="_blank">
+
 <img src="{{ url_for('static', filename='kubernetes.png') }}">
+
 </a>
 
+
 <p>
+
 <b>Kubernetes</b><br>
-Performs rolling updates and deploys the newest version.
+
+Runs containers and performs scaling.
+
+</p>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<!-- TECHNOLOGY STACK -->
+
+
+<div class="section">
+
+
+<h2>
+🛠 Technology Stack
+</h2>
+
+
+<div class="badges">
+
+
+<span class="badge">Flask</span>
+
+<span class="badge">GitHub</span>
+
+<span class="badge">GitHub Actions</span>
+
+<span class="badge">Docker</span>
+
+<span class="badge">Docker Hub</span>
+
+<span class="badge">ArgoCD</span>
+
+<span class="badge">Kubernetes</span>
+
+<span class="badge">Minikube</span>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<!-- CLUSTER HEALTH -->
+
+
+<div class="section">
+
+
+<h2>
+📊 Cluster Health
+</h2>
+
+
+<div class="status">
+
+
+
+<div class="status-box">
+
+<div class="green">
+🟢 Healthy
+</div>
+
+<p>
+ArgoCD
 </p>
 
 </div>
 
-</div>
 
-<div class="section">
 
-<h2>🛠 Technology Stack</h2>
-
-<div class="badges">
-
-<span class="badge">Flask</span>
-<span class="badge">GitHub</span>
-<span class="badge">GitHub Actions</span>
-<span class="badge">Docker</span>
-<span class="badge">Docker Hub</span>
-<span class="badge">ArgoCD</span>
-<span class="badge">Kubernetes</span>
-<span class="badge">Minikube</span>
-
-</div>
-
-</div>
-
-<div class="section">
-
-<h2>📊 Cluster Health</h2>
-
-<div class="status">
 
 <div class="status-box">
-<div class="green">🟢 Healthy</div>
-<p>ArgoCD</p>
+
+<div class="green">
+🟢 Running
 </div>
+
+<p>
+{{ pod_count }} Kubernetes Pods
+</p>
+
+</div>
+
+
+
+
 
 <div class="status-box">
-<div class="green">🟢 Running</div>
-<p>Kubernetes Pods</p>
+
+<div class="green">
+🟢 Active
 </div>
+
+<p>
+GitHub Actions
+</p>
+
+</div>
+
+
+
+
 
 <div class="status-box">
-<div class="green">🟢 Active</div>
-<p>GitHub Actions</p>
+
+<div class="green">
+🟢 Available
 </div>
+
+<p>
+Docker Image
+</p>
+
+</div>
+
+
+
+
 
 <div class="status-box">
-<div class="green">🟢 Available</div>
-<p>Docker Image</p>
+
+<div class="green">
+🟢 Enabled
 </div>
+
+<p>
+HPA Autoscaling
+</p>
 
 </div>
 
+
+
 </div>
+
+
+</div>
+
+
+
+
 
 <footer>
 
-<h3>Designed & Developed by Nandakumar</h3>
 
-<p>DevOps Engineer | GitHub • Docker • Kubernetes • ArgoCD • GitHub Actions</p>
+<h3>
+Designed & Developed by Nandakumar
+</h3>
+
+
+<p>
+DevOps Engineer | GitHub • Docker • Kubernetes • ArgoCD • GitHub Actions
+</p>
+
 
 </footer>
 
+
+
 </div>
 
+
 </body>
+
 </html>
