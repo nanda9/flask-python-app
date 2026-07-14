@@ -33,25 +33,26 @@ jobs:
           docker build -t "$IMAGE" .
           docker push "$IMAGE"
       
-      # 5. Update Kubernetes deployment.yaml
-      - name: Update Kubernetes Image
+      # 5. Update Helm image tag
+      - name: Update Helm image tag
         run: |
-          echo "Updating deployment.yaml"
+          echo "Updating Helm values.yaml"
 
-          sed -i "s|image: .*|image: $IMAGE|g" GitOps-Repo/deployment.yaml
+          sed -i "s|tag: .*|tag: ${{ github.sha }}|g" flask-chart/values.yaml
 
-          cat GitOps-Repo/deployment.yaml
+          cat flask-chart/values.yaml
 
-      # 6. Commit GitOps change
-      - name: Commit Kubernetes manifest
+
+      # 6. Commit Helm change
+      - name: Commit Helm update
         run: |
 
           git config user.name "github-actions"
 
           git config user.email "github-actions@github.com"
 
-          git add GitOps-Repo/deployment.yaml
+          git add flask-chart/values.yaml
 
-          git commit -m "Update image to ${{ github.sha }}" || echo "No changes"
+          git commit -m "Update image tag to ${{ github.sha }}" || echo "No changes"
 
           git push
