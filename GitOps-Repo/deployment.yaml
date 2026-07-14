@@ -28,13 +28,9 @@ spec:
       containers:
       - name: flask
 
-<<<<<<< HEAD
         image:
           {{ .Values.image.repository }}:{{ .Values.image.tag }}
-=======
-        image: nandadocker23/my-python-app:4412e4dd7f4019a1b3b666868ef622f052babee4
         imagePullPolicy: IfNotPresent
->>>>>>> 8ce351f1870ef671a2f401a2b4d4c9204076272c
 
         ports:
         - containerPort: 5000
