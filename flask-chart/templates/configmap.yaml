@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flask-config
+  namespace: {{ .Release.Namespace }}
+data:
+  APP_NAME: "DevOps CI/CD Dashboard"
+  APP_ENV: "Kubernetes"
+  COMPANY: "Nandakumar DevOps"
