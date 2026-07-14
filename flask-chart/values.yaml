@@ -9,9 +9,9 @@ replicaCount: 5
 image:
   repository: nandadocker23/my-python-app
   # This sets the pull policy for images.
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: f893606ddfe77692fa9690f549a7b429080cce8d
+  tag: e4c391a4edb5657c1bf005083ea65ee6a4dd55dc
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
