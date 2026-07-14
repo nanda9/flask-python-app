@@ -17,7 +17,7 @@ spec:
   source:
     repoURL: https://github.com/nanda9/flask-python-app.git
     targetRevision: main
-    path: GitOps-Repo
+    path: flask-chart
 
 
   destination:
@@ -28,7 +28,7 @@ spec:
   syncPolicy:
 
     automated:
-      prune: false
+      prune: true
       selfHeal: true
 
     syncOptions:
