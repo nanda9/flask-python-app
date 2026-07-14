@@ -22,8 +22,9 @@ spec:
     metadata:
       labels:
         app: flask
-
     spec:
+      serviceAccountName: flask-sa
+      
       containers:
       - name: flask
 

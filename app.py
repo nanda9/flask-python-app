@@ -36,7 +36,7 @@ def home():
         pod_count = len(running_pods)
 
     except Exception as e:
-        print("Kubernetes Error:", e)
+        print(f"Kubernetes API Error: {e}")
         pod_count = "N/A"
 
     return render_template(
