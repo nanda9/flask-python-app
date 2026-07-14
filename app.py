@@ -9,13 +9,13 @@ app = Flask(__name__)
 @app.route("/")
 def home():
 
-    # Read ConfigMap values
     app_name = os.getenv("APP_NAME")
     app_env = os.getenv("APP_ENV")
     company = os.getenv("COMPANY")
+    namespace = os.getenv("NAMESPACE", "dev")
 
-    # Get Kubernetes pod information
     try:
+
         try:
             config.load_incluster_config()
         except:
@@ -24,8 +24,8 @@ def home():
         v1 = client.CoreV1Api()
 
         pods = v1.list_namespaced_pod(
-            namespace="dev",
-            label_selector="app=flask"
+            namespace=namespace,
+            label_selector="app.kubernetes.io/name=flask-chart"
         )
 
         running_pods = [
@@ -39,6 +39,7 @@ def home():
         print(f"Kubernetes API Error: {e}")
         pod_count = "N/A"
 
+
     return render_template(
         "index.html",
         app_name=app_name,
@@ -46,7 +47,7 @@ def home():
         company=company,
         pod_count=pod_count,
         hostname=socket.gethostname(),
-        namespace="dev"
+        namespace=namespace
     )
 
 
