@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd.argoproj.io/tracking-id: my-python-app:apps/Deployment:dev/flask-deployment
+    deployment.kubernetes.io/revision: "14"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"argocd.argoproj.io/tracking-id":"my-python-app:apps/Deployment:dev/flask-deployment"},"name":"flask-deployment","namespace":"dev"},"spec":{"replicas":3,"selector":{"matchLabels":{"app":"flask"}},"strategy":{"rollingUpdate":{"maxSurge":1,"maxUnavailable":1},"type":"RollingUpdate"},"template":{"metadata":{"labels":{"app":"flask"}},"spec":{"containers":[{"envFrom":[{"configMapRef":{"name":"flask-config"}},{"secretRef":{"name":"flask-secret"}}],"image":"nandadocker23/my-python-app:7cffeae964b82a0ab40d247c4865ee40f0d8cd95","imagePullPolicy":"IfNotPresent","livenessProbe":{"httpGet":{"path":"/health","port":5000},"initialDelaySeconds":15,"periodSeconds":20},"name":"flask","ports":[{"containerPort":5000}],"readinessProbe":{"httpGet":{"path":"/health","port":5000},"initialDelaySeconds":5,"periodSeconds":10},"resources":{"limits":{"cpu":"500m"},"requests":{"cpu":"100m","memory":"128Mi"}}}],"serviceAccountName":"flask-sa"}}}}
+  creationTimestamp: "2026-07-10T16:39:48Z"
+  generation: 574
+  name: flask-deployment
+  namespace: dev
+  resourceVersion: "160028"
+  uid: acd9ad91-bd46-4d10-90a8-d0c295be67c4
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: flask
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: flask
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: flask-config
+        - secretRef:
+            name: flask-secret
+        image: nandadocker23/my-python-app:7cffeae964b82a0ab40d247c4865ee40f0d8cd95
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 5000
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: flask
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 5000
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: flask-sa
+      serviceAccountName: flask-sa
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 3
+  conditions:
+  - lastTransitionTime: "2026-07-14T01:40:23Z"
+    lastUpdateTime: "2026-07-14T01:40:23Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2026-07-10T16:39:48Z"
+    lastUpdateTime: "2026-07-14T01:44:03Z"
+    message: ReplicaSet "flask-deployment-684f5fc6b8" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 574
+  readyReplicas: 3
+  replicas: 3
+  terminatingReplicas: 0
+  updatedReplicas: 3

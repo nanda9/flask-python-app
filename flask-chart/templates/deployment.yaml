@@ -2,43 +2,48 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
-  name: flask-deployment
-  namespace: dev
+  name: {{ include "flask-chart.fullname" . }}
+  labels:
+    {{- include "flask-chart.labels" . | nindent 4 }}
 
 spec:
   replicas: {{ .Values.replicaCount }}
 
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 1
-
   selector:
     matchLabels:
-      app: flask
+      {{- include "flask-chart.selectorLabels" . | nindent 6 }}
 
   template:
     metadata:
       labels:
-        app: flask
+        {{- include "flask-chart.selectorLabels" . | nindent 8 }}
+
     spec:
-      serviceAccountName: flask-sa
-      
+
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+
       containers:
+
       - name: flask
 
-        image:
-          {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
 
         ports:
-        - containerPort: 5000
+        - name: http
+          containerPort: 5000
+          protocol: TCP
+
 
         envFrom:
+
         - configMapRef:
             name: flask-config
+
         - secretRef:
             name: flask-secret
+
 
         readinessProbe:
           httpGet:
@@ -47,6 +52,7 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 10
 
+
         livenessProbe:
           httpGet:
             path: /health
@@ -54,9 +60,6 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 20
 
+
         resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
-          limits:
-            cpu: "500m"
+          {{- toYaml .Values.resources | nindent 10 }}
