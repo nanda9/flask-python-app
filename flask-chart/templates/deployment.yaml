@@ -33,13 +33,6 @@ spec:
     spec:
 
       serviceAccountName: {{ .Values.serviceAccount.name }}
-      
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-
       terminationGracePeriodSeconds: 30
 
       containers:
@@ -47,12 +40,6 @@ spec:
       - name: flask
 
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
 
         imagePullPolicy: {{ .Values.image.pullPolicy }}
 
