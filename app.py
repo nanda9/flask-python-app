@@ -1,13 +1,29 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, Response
 from kubernetes import client, config
 import os
+from prometheus_client import Counter, Histogram, generate_latest
+from prometheus_client import CONTENT_TYPE_LATEST
 import socket
+import time
+
 
 app = Flask(__name__)
 
+REQUEST_COUNT = Counter(
+    "flask_requests_total",
+    "Total number of Flask requests"
+)
+
+REQUEST_LATENCY = Histogram(
+    "flask_request_duration_seconds",
+    "Flask request latency"
+)
 
 @app.route("/")
 def home():
+
+    start = time.time()
+    REQUEST_COUNT.inc()
 
     app_name = os.getenv("APP_NAME")
     app_env = os.getenv("APP_ENV")
@@ -15,7 +31,6 @@ def home():
     namespace = os.getenv("NAMESPACE", "dev")
 
     try:
-
         try:
             config.load_incluster_config()
         except:
@@ -39,8 +54,7 @@ def home():
         print(f"Kubernetes API Error: {e}")
         pod_count = "N/A"
 
-
-    return render_template(
+    response = render_template(
         "index.html",
         app_name=app_name,
         app_env=app_env,
@@ -50,6 +64,9 @@ def home():
         namespace=namespace
     )
 
+    REQUEST_LATENCY.observe(time.time() - start)
+
+    return response
 
 @app.route("/health")
 def health():
@@ -57,6 +74,12 @@ def health():
         "status": "healthy"
     }
 
+@app.route("/metrics")
+def metrics():
+    return Response(
+        generate_latest(),
+        mimetype=CONTENT_TYPE_LATEST
+    )
 
 if __name__ == "__main__":
     app.run(
