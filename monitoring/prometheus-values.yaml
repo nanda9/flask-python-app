@@ -1,0 +1,34 @@
+serverFiles:
+  prometheus.yml:
+    scrape_configs:
+
+      # Prometheus monitors itself
+      - job_name: prometheus
+        static_configs:
+          - targets:
+              - localhost:9090
+
+      # Kubernetes API Servers
+      - job_name: kubernetes-apiservers
+        kubernetes_sd_configs:
+          - role: endpoints
+
+      # Flask Application
+      - job_name: flask-app
+        metrics_path: /metrics
+        scrape_interval: 15s
+
+        kubernetes_sd_configs:
+          - role: service
+            namespaces:
+              names:
+                - dev
+
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name]
+            action: keep
+            regex: my-python-app-flask-chart
+
+          - source_labels: [__meta_kubernetes_service_port_name]
+            action: keep
+            regex: http
