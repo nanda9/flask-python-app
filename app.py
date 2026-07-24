@@ -22,6 +22,8 @@ REQUEST_LATENCY = Histogram(
 @app.route("/")
 def home():
 
+    time.sleep(1)   # simulate a slow application
+
     start = time.time()
     REQUEST_COUNT.inc()
 
