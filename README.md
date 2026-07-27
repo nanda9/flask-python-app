@@ -44,14 +44,12 @@ Built using modern cloud-native technologies and DevOps best practices.
 - Technology Stack
 - DevOps Workflow
 - Repository Structure
-- Installation *(Part 2)*
-- Kubernetes Deployment *(Part 2)*
-- CI/CD Pipeline *(Part 3)*
-- Monitoring *(Part 4)*
-- Logging *(Part 4)*
-- Alerting *(Part 4)*
-- Troubleshooting *(Part 5)*
-- Interview Questions *(Part 5)*
+- Installation
+- Kubernetes Deployment
+- CI/CD Pipeline
+- Monitoring
+- Logging
+- Alerting
 
 ---
 
