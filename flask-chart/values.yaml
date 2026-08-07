@@ -61,9 +61,10 @@ service:
 ingress:
   enabled: true
   className: alb
-  annotations: {}
-    # kubernetes.io/ingress.class: alb
-    # kubernetes.io/tls-acme: "true"
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    
   hosts:
     - host: flask.local
       paths:
