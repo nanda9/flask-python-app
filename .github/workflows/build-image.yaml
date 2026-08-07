@@ -1,11 +1,17 @@
-name: Build Docker Image
+name: Build and Push Docker Image to ECR
 
 on:
   push:
     branches: ["main"]
     
 permissions:
+  id-token: write
   contents: write   # required so the workflow can git push back
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: watchtower
+  ECR_REGISTRY: 405804178912.dkr.ecr.us-east-1.amazonaws.com
 
 jobs:
   build-and-deploy:
@@ -16,24 +22,37 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Login to Docker Hub
-      - name: Login to Docker Hub
-        run: |
-          echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+      # 2. Authenticate to AWS using GitHub OIDC
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::405804178912:role/github-actions-ecr-role
+          aws-region: ${{ env.AWS_REGION }}
 
-      # 3. Compute image tag once, persist across steps
-      - name: Set image tag
-        run: |
-          echo "IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:${{ github.sha }}" >> "$GITHUB_ENV"
+      # 3. Verify AWS identity
+      - name: Verify AWS identity
+        run: aws sts get-caller-identity
 
-      # 4. Build + push image
-      - name: Build and Push Docker image
-        run: |
-          echo "Building image: $IMAGE"
-          docker build -t "$IMAGE" .
-          docker push "$IMAGE"
+      # 4. Login to Amazon ECR
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
       
-      # 5. Update Helm image tag
+      # 5. Set image tag 
+      - name: Set image tag 
+        run: | 
+          echo "IMAGE=${ECR_REGISTRY}/${ECR_REPOSITORY}:${GITHUB_SHA}" >> "$GITHUB_ENV" 
+
+      # 6. Build Docker image 
+      - name: Build Docker image
+        run: |
+          echo "Building image: $IMAGE" docker build -t "$IMAGE" . 
+      
+      # 7. Push Docker image to ECR 
+      - name: Push Docker image
+        run: | 
+          echo "Pushing image: $IMAGE" docker push "$IMAGE"
+
+      # 8. Update Helm image tag
       - name: Update Helm image tag
         run: |
           echo "Updating Helm values.yaml"
@@ -43,7 +62,7 @@ jobs:
           cat flask-chart/values.yaml
 
 
-      # 6. Commit Helm change
+      # 9. Commit Helm change
       - name: Commit Helm update
         run: |
 
