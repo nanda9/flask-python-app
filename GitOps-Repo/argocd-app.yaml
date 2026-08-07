@@ -5,13 +5,7 @@ metadata:
   name: my-python-app
   namespace: argocd
 
-  annotations:
-    argocd-image-updater.argoproj.io/image-list: flask=nandadocker23/my-python-app
-    argocd-image-updater.argoproj.io/flask.update-strategy: latest
-    argocd-image-updater.argoproj.io/write-back-method: git
-
 spec:
-
   project: default
 
   source:
@@ -26,7 +20,6 @@ spec:
 
 
   syncPolicy:
-
     automated:
       prune: true
       selfHeal: true
