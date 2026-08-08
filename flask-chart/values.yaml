@@ -157,3 +157,9 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+monitoring:
+  serviceMonitor:
+    enabled: true
+    interval: 15s
+    scrapeTimeout: 10s
