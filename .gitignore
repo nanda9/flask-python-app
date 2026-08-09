@@ -1,2 +1,4 @@
 minikube-darwin-arm64
 .DS_Store
+venv/
+.venv/
