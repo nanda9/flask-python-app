@@ -1,0 +1,33 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+
+metadata:
+  name: {{ include "flask-chart.fullname" . }}-alerts
+  labels:
+    {{- include "flask-chart.labels" . | nindent 4 }}
+    release: monitoring
+
+spec:
+  groups:
+    - name: flask-application.rules
+
+      rules:
+
+        - alert: FlaskApplicationDown
+          expr: |
+            sum(
+              up{
+                job="{{ include "flask-chart.fullname" . }}",
+                namespace="{{ .Release.Namespace }}"
+              }
+            ) < 1
+
+          for: 1m
+
+          labels:
+            severity: critical
+            team: platform
+
+          annotations:
+            summary: "Flask application is down"
+            description: "All Flask application pods in namespace {{ .Release.Namespace }} are unavailable."
