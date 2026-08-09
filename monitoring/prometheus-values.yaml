@@ -1,34 +1,28 @@
-serverFiles:
-  prometheus.yml:
-    scrape_configs:
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "flask-chart.fullname" . }}-alerts
+  labels:
+    {{- include "flask-chart.labels" . | nindent 4 }}
+    release: monitoring
 
-      # Prometheus monitors itself
-      - job_name: prometheus
-        static_configs:
-          - targets:
-              - localhost:9090
+spec:
+  groups:
+    - name: flask-application.rules
+      rules:
 
-      # Kubernetes API Servers
-      - job_name: kubernetes-apiservers
-        kubernetes_sd_configs:
-          - role: endpoints
+        - alert: FlaskApplicationUnavailable
+          expr: |
+            kube_deployment_status_replicas_available{
+              namespace="{{ .Release.Namespace }}",
+              deployment="{{ include "flask-chart.fullname" . }}"
+            } < 1
+          for: 1m
 
-      # Flask Application
-      - job_name: flask-app
-        metrics_path: /metrics
-        scrape_interval: 15s
+          labels:
+            severity: critical
+            team: platform
 
-        kubernetes_sd_configs:
-          - role: service
-            namespaces:
-              names:
-                - dev
-
-        relabel_configs:
-          - source_labels: [__meta_kubernetes_service_name]
-            action: keep
-            regex: my-python-app-flask-chart
-
-          - source_labels: [__meta_kubernetes_service_port_name]
-            action: keep
-            regex: http
+          annotations:
+            summary: "Flask application is unavailable"
+            description: "No available replicas for {{ include "flask-chart.fullname" . }} in namespace {{ .Release.Namespace }}."
