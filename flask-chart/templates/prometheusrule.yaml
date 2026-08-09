@@ -1,6 +1,5 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
-
 metadata:
   name: {{ include "flask-chart.fullname" . }}-alerts
   labels:
@@ -10,18 +9,14 @@ metadata:
 spec:
   groups:
     - name: flask-application.rules
-
       rules:
 
-        - alert: FlaskApplicationDown
+        - alert: FlaskApplicationUnavailable
           expr: |
-            sum(
-              up{
-                job="{{ include "flask-chart.fullname" . }}",
-                namespace="{{ .Release.Namespace }}"
-              }
-            ) < 1
-
+            kube_deployment_status_replicas_available{
+              namespace="{{ .Release.Namespace }}",
+              deployment="{{ include "flask-chart.fullname" . }}"
+            } < 1
           for: 1m
 
           labels:
@@ -29,5 +24,5 @@ spec:
             team: platform
 
           annotations:
-            summary: "Flask application is down"
-            description: "All Flask application pods in namespace {{ .Release.Namespace }} are unavailable."
+            summary: "Flask application is unavailable"
+            description: "No available replicas for {{ include "flask-chart.fullname" . }} in namespace {{ .Release.Namespace }}."
