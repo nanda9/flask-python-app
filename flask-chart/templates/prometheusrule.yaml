@@ -5,22 +5,23 @@ metadata:
   labels:
     {{- include "flask-chart.labels" . | nindent 4 }}
     release: monitoring
+
 spec:
   groups:
     - name: flask-application.rules
       rules:
         - alert: FlaskApplicationDown
           expr: |
-            sum(
-              up{
-                job="{{ include "flask-chart.fullname" . }}",
-                namespace="{{ .Release.Namespace }}"
-              }
-            ) < 1
+            kube_deployment_status_replicas_available{
+              namespace="dev",
+              deployment="{{ include "flask-chart.fullname" . }}"
+            } < 1
           for: 1m
+
           labels:
             severity: critical
             team: platform
+
           annotations:
             summary: "Flask application is unavailable"
             description: "No available replicas for {{ include "flask-chart.fullname" . }} in the {{ .Release.Namespace }} namespace."
