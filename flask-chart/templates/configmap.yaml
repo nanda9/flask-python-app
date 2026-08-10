@@ -6,6 +6,7 @@ metadata:
   labels:
     app: flask
 data:
-  APP_NAME: "DevOps CI/CD Dashboard"
-  APP_ENV: "Kubernetes"
-  COMPANY: "Nandakumar DevOps"
+  APP_NAME: {{ .Values.env.APP_NAME | quote }}
+  APP_ENV: {{ .Values.env.APP_ENV | quote }}
+  COMPANY: {{ .Values.env.COMPANY | quote }}
+  NAMESPACE: {{ .Values.env.NAMESPACE | quote }}
