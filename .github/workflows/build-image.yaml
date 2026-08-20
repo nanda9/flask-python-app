@@ -119,6 +119,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Validate Helm chart
+        run: |
+          helm lint flask-chart
+
       - name: Update Helm image tag
         run: |
           echo "Updating Helm image tag to:"
