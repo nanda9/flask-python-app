@@ -1,46 +1,61 @@
 from flask import Flask, render_template, Response
 from kubernetes import client, config
 import os
-from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import (
+    Counter,
+    Histogram,
+    generate_latest,
+    CONTENT_TYPE_LATEST,
+)
 import socket
 import time
 
 app = Flask(__name__)
 
 
+# --------------------------------------------------
 # Prometheus metrics
+# --------------------------------------------------
+
 REQUEST_COUNT = Counter(
     "flask_requests_total",
     "Total number of Flask requests",
-    ["method", "endpoint"]
+    ["method", "endpoint"],
 )
 
 REQUEST_LATENCY = Histogram(
     "flask_request_duration_seconds",
     "Flask request latency",
-    ["method", "endpoint"]
+    ["method", "endpoint"],
 )
 
+
+# --------------------------------------------------
+# Home
+# --------------------------------------------------
 
 @app.route("/")
 def home():
 
     start = time.time()
 
-    # Simulate a slow application
+    # Simulate application latency
     time.sleep(1)
 
     REQUEST_COUNT.labels(
         method="GET",
-        endpoint="/"
+        endpoint="/",
     ).inc()
 
-    app_name = os.getenv("APP_NAME")
-    app_env = os.getenv("APP_ENV")
-    company = os.getenv("COMPANY")
-    namespace = os.getenv("NAMESPACE", "dev")
+    app_name = os.getenv("APP_NAME", "Watchtower")
+    app_env = os.getenv("APP_ENV", "dev")
+    company = os.getenv("COMPANY", "Demo")
+    namespace = os.getenv("NAMESPACE", "default")
 
+    # --------------------------------------------------
     # Query Kubernetes API
+    # --------------------------------------------------
+
     try:
 
         try:
@@ -55,7 +70,7 @@ def home():
 
         pods = v1.list_namespaced_pod(
             namespace=namespace,
-            label_selector="app.kubernetes.io/name=flask-chart"
+            label_selector="app=watchtower",
         )
 
         running_pods = [
@@ -72,7 +87,10 @@ def home():
 
         pod_count = "N/A"
 
+    # --------------------------------------------------
     # Render application page
+    # --------------------------------------------------
+
     response = render_template(
         "index.html",
         app_name=app_name,
@@ -80,24 +98,31 @@ def home():
         company=company,
         pod_count=pod_count,
         hostname=socket.gethostname(),
-        namespace=namespace
+        namespace=namespace,
     )
 
-    # Record request latency
+    # --------------------------------------------------
+    # Record latency
+    # --------------------------------------------------
+
     REQUEST_LATENCY.labels(
         method="GET",
-        endpoint="/"
+        endpoint="/",
     ).observe(time.time() - start)
 
     return response
 
+
+# --------------------------------------------------
+# Health check
+# --------------------------------------------------
 
 @app.route("/health")
 def health():
 
     REQUEST_COUNT.labels(
         method="GET",
-        endpoint="/health"
+        endpoint="/health",
     ).inc()
 
     return {
@@ -105,18 +130,26 @@ def health():
     }
 
 
+# --------------------------------------------------
+# Prometheus metrics
+# --------------------------------------------------
+
 @app.route("/metrics")
 def metrics():
 
     return Response(
         generate_latest(),
-        mimetype=CONTENT_TYPE_LATEST
+        mimetype=CONTENT_TYPE_LATEST,
     )
 
+
+# --------------------------------------------------
+# Local development
+# --------------------------------------------------
 
 if __name__ == "__main__":
 
     app.run(
         host="0.0.0.0",
-        port=5000
+        port=5000,
     )
