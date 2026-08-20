@@ -1,14 +1,15 @@
-from flask import Flask, render_template, Response
-from kubernetes import client, config
 import os
+import socket
+import time
+
+from flask import Flask, Response, render_template
+from kubernetes import client, config
 from prometheus_client import (
+    CONTENT_TYPE_LATEST,
     Counter,
     Histogram,
     generate_latest,
-    CONTENT_TYPE_LATEST,
 )
-import socket
-import time
 
 app = Flask(__name__)
 
@@ -62,7 +63,7 @@ def home():
             # Running inside Kubernetes
             config.load_incluster_config()
 
-        except Exception:
+        except config.ConfigException:
             # Running locally
             config.load_kube_config()
 
@@ -81,10 +82,8 @@ def home():
 
         pod_count = len(running_pods)
 
-    except Exception as e:
-
+    except (config.ConfigException, client.ApiException) as e:
         print(f"Kubernetes API Error: {e}")
-
         pod_count = "N/A"
 
     # --------------------------------------------------

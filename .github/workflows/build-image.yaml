@@ -37,45 +37,51 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
-      # 4. Run automated tests
+      # 4. Run linting
+      - name: Run Ruff lint
+        run: |
+          pip install ruff
+          ruff check .
+
+      # 5. Run automated tests
       - name: Run pytest
         run: |
           python -m pytest -v
 
-      # 5. Authenticate to AWS using GitHub OIDC
+      # 6. Authenticate to AWS using GitHub OIDC
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::405804178912:role/github-actions-ecr-role
           aws-region: ${{ env.AWS_REGION }}
 
-      # 6. Verify AWS identity
+      # 7. Verify AWS identity
       - name: Verify AWS identity
         run: |
           aws sts get-caller-identity
 
-      # 7. Login to Amazon ECR
+      # 8. Login to Amazon ECR
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      # 8. Set image tag
+      # 9. Set image tag
       - name: Set image tag
         run: |
           echo "IMAGE=${ECR_REGISTRY}/${ECR_REPOSITORY}:${GITHUB_SHA}" >> "$GITHUB_ENV"
 
-      # 9. Build Docker image
+      # 10. Build Docker image
       - name: Build Docker image
         run: |
           echo "Building image: $IMAGE"
           docker build -t "$IMAGE" .
 
-      # 10. Push Docker image to ECR
+      # 11. Push Docker image to ECR
       - name: Push Docker image
         run: |
           echo "Pushing image: $IMAGE"
           docker push "$IMAGE"
 
-      # 11. Update Helm image tag
+      # 12. Update Helm image tag
       - name: Update Helm image tag
         run: |
           echo "Updating Helm values.yaml"
@@ -84,7 +90,7 @@ jobs:
 
           cat flask-chart/values.yaml
 
-      # 12. Commit Helm change
+      # 13. Commit Helm change
       - name: Commit Helm update
         run: |
           git config user.name "github-actions"
