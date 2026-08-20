@@ -185,6 +185,9 @@ affinity: {}
 
 monitoring:
   serviceMonitor:
-    enabled: true
+    enabled: false
     interval: 15s
     scrapeTimeout: 10s
+
+  prometheusRule:
+    enabled: false

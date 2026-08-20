@@ -1,3 +1,4 @@
+{{- if .Values.monitoring.prometheusRule.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -25,3 +26,5 @@ spec:
           annotations:
             summary: "Flask application is unavailable"
             description: "No available replicas for {{ include "flask-chart.fullname" . }} in the {{ .Release.Namespace }} namespace."
+
+{{- end }}
