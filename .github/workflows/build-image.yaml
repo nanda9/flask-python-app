@@ -1,8 +1,9 @@
-name: Build and Push Docker Image to ECR
+name: CI-CD Pipeline
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
 
 permissions:
   id-token: write
@@ -12,83 +13,122 @@ env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: watchtower
   ECR_REGISTRY: 405804178912.dkr.ecr.us-east-1.amazonaws.com
+  IMAGE: 405804178912.dkr.ecr.us-east-1.amazonaws.com/watchtower:${{ github.sha }}
 
 jobs:
-  build-and-deploy:
+
+  # ============================================================
+  # CI
+  # ============================================================
+
+  test:
+    name: Code Quality and Tests
     runs-on: ubuntu-latest
 
     steps:
 
-      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.14"
 
-      # 3. Install Python dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install ruff pytest
 
-      # 4. Run Ruff
       - name: Run Ruff
         run: |
           ruff check .
 
-      # 5. Run Pytest
-      - name: Run tests
+      - name: Run Pytest
         run: |
           python -m pytest -v
 
-      # 6. Authenticate to AWS using GitHub OIDC
+
+  # ============================================================
+  # Docker Build + Security + ECR
+  # ============================================================
+
+  build:
+    name: Build Scan and Push Image
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::405804178912:role/github-actions-ecr-role
           aws-region: ${{ env.AWS_REGION }}
 
-      # 7. Verify AWS identity
       - name: Verify AWS identity
         run: |
           aws sts get-caller-identity
 
-      # 8. Login to Amazon ECR
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      # 9. Set image tag
-      - name: Set image tag
-        run: |
-          echo "IMAGE=${ECR_REGISTRY}/${ECR_REPOSITORY}:${GITHUB_SHA}" >> "$GITHUB_ENV"
-
-      # 10. Build Docker image
       - name: Build Docker image
         run: |
-          echo "Building image: $IMAGE"
-          docker build -t "$IMAGE" .
+          echo "Building image:"
+          echo "$IMAGE"
 
-      # 11. Push Docker image to ECR
+          docker build \
+            -t "$IMAGE" \
+            .
+
+      - name: Run Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE }}
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: "CRITICAL,HIGH"
+
       - name: Push Docker image
         run: |
-          echo "Pushing image: $IMAGE"
+          echo "Pushing image:"
+          echo "$IMAGE"
+
           docker push "$IMAGE"
 
-      # 12. Update Helm image tag
+
+  # ============================================================
+  # GitOps
+  # ============================================================
+
+  update-manifest:
+    name: Update Helm Image Tag
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Update Helm image tag
         run: |
-          echo "Updating Helm values.yaml"
+          echo "Updating Helm image tag to:"
+          echo "${GITHUB_SHA}"
 
           sed -i "s|tag: .*|tag: ${GITHUB_SHA}|g" flask-chart/values.yaml
 
+          echo "Updated values.yaml:"
           cat flask-chart/values.yaml
 
-      # 13. Commit Helm change
       - name: Commit Helm update
         run: |
           git config user.name "github-actions"
@@ -96,6 +136,10 @@ jobs:
 
           git add flask-chart/values.yaml
 
-          git commit -m "Update image tag to ${GITHUB_SHA}" || echo "No changes"
+          git diff --cached
+
+          git commit \
+            -m "chore: update image tag to ${GITHUB_SHA} [skip ci]" \
+            || echo "No changes to commit"
 
           git push
