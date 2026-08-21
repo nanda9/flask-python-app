@@ -314,7 +314,7 @@ Helm values control environment-specific configuration.
 Example:
 
 ```yaml
-replicaCount: 5
+replicaCount: 1
 
 image:
   repository: 405804178912.dkr.ecr.us-east-1.amazonaws.com/watchtower
@@ -327,8 +327,8 @@ service:
 
 autoscaling:
   enabled: true
-  minReplicas: 3
-  maxReplicas: 10
+  minReplicas: 1
+  maxReplicas: 1
   targetCPUUtilizationPercentage: 70
 ```
 
@@ -344,8 +344,8 @@ The deployment uses a rolling update strategy:
 strategy:
   type: RollingUpdate
   rollingUpdate:
-    maxSurge: 1
-    maxUnavailable: 0
+    maxSurge: 0
+    maxUnavailable: 1
 ```
 
 This allows new pods to become available before existing pods are terminated.
@@ -396,15 +396,15 @@ Current configuration:
 ```yaml
 autoscaling:
   enabled: true
-  minReplicas: 3
-  maxReplicas: 10
+  minReplicas: 1
+  maxReplicas: 1
   targetCPUUtilizationPercentage: 70
 ```
 
 The HPA can scale the application between:
 
 ```text
-3 → 10 replicas
+1 → 1 replicas
 ```
 
 based on CPU utilization.
