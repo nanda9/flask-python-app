@@ -66,7 +66,7 @@ variable "environment" {
 variable "instance_types" {
   description = "EC2 instance types for EKS nodes"
   type        = list(string)
-  default     = ["t3.micro"]
+  default     = ["t3.small"]
 }
 
 variable "desired_nodes" {
