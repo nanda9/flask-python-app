@@ -1,25 +1,18 @@
-{{- if .Values.monitoring.serviceMonitor.enabled }}
+{{- if .Values.metrics.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
-
 metadata:
   name: {{ include "flask-chart.fullname" . }}
   labels:
-    release: monitoring
     {{- include "flask-chart.labels" . | nindent 4 }}
-
+    release: monitoring
 spec:
   selector:
     matchLabels:
-      {{- include "flask-chart.selectorLabels" . | nindent 6 }}
-
-  namespaceSelector:
-    matchNames:
-      - {{ .Release.Namespace }}
-
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/name: {{ include "flask-chart.name" . }}
   endpoints:
     - port: http
       path: /metrics
-      interval: {{ .Values.monitoring.serviceMonitor.interval }}
-      scrapeTimeout: {{ .Values.monitoring.serviceMonitor.scrapeTimeout }}
+      interval: 15s
 {{- end }}
