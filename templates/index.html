@@ -1,98 +1,704 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Production DevOps Dashboard</title>
+
+<title>{{ app_name }} | Production DevOps Platform</title>
+
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#0b1220;color:#fff}
-header{background:#111827;padding:24px;text-align:center}
-header h1{color:#3bf6b5;margin:0}
-header p{color:#cbd5e1}
-.container{width:95%;max-width:1200px;margin:auto;padding:20px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
-.card,.section{background:#1e293b;border-radius:12px;padding:20px;box-shadow:0 3px 10px rgba(0,0,0,.4)}
-.card h3{margin:0}.value{font-size:30px;color:#22c55e;margin:10px 0}
-.section h2{color:#60a5fa}
-.badge{display:inline-block;background:#2563eb;padding:8px 14px;border-radius:18px;margin:5px}
-.pipeline div{padding:10px;border-left:4px solid #22c55e;margin:10px 0;background:#0f172a}
-.links a{display:inline-block;margin:6px;padding:10px 16px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px}
-footer{text-align:center;padding:25px;color:#94a3b8}
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0b1220;
+    color: #f8fafc;
+}
+
+header {
+    background: linear-gradient(135deg, #111827, #172554);
+    padding: 35px 20px;
+    text-align: center;
+    border-bottom: 1px solid #334155;
+}
+
+header h1 {
+    margin: 0;
+    color: #3bf6b5;
+    font-size: 36px;
+}
+
+header p {
+    color: #cbd5e1;
+    margin: 10px 0;
+}
+
+.subtitle {
+    font-size: 15px;
+}
+
+.container {
+    width: 94%;
+    max-width: 1250px;
+    margin: auto;
+    padding: 25px 0;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.card,
+.section {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+}
+
+.card h3 {
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 16px;
+}
+
+.value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #22c55e;
+    margin: 12px 0 5px;
+}
+
+.small {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.section {
+    margin-bottom: 22px;
+}
+
+.section h2 {
+    color: #60a5fa;
+    margin-top: 0;
+}
+
+/* Pipeline */
+
+.pipeline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 12px;
+}
+
+.pipeline-step {
+    background: #0f172a;
+    border-left: 4px solid #22c55e;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.pipeline-step strong {
+    display: block;
+    color: #f8fafc;
+    margin-bottom: 5px;
+}
+
+.pipeline-step span {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+/* Architecture */
+
+.architecture {
+    background: #020617;
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.architecture pre {
+    margin: 0;
+    color: #cbd5e1;
+    font-family: monospace;
+    line-height: 1.7;
+}
+
+/* Technology badges */
+
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.badge {
+    display: inline-block;
+    background: #2563eb;
+    color: white;
+    padding: 8px 13px;
+    border-radius: 18px;
+    font-size: 13px;
+}
+
+/* Status */
+
+.status-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.status-list li {
+    padding: 9px 0;
+    border-bottom: 1px solid #334155;
+}
+
+.status-list li:last-child {
+    border-bottom: none;
+}
+
+.success {
+    color: #22c55e;
+}
+
+/* Links */
+
+.links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.links a {
+    display: inline-block;
+    padding: 11px 18px;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.links a:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+/* Footer */
+
+footer {
+    text-align: center;
+    padding: 35px 20px;
+    color: #94a3b8;
+    border-top: 1px solid #1e293b;
+}
+
+footer h3 {
+    color: #3bf6b5;
+    margin-bottom: 8px;
+}
+
+@media (max-width: 600px) {
+
+    header h1 {
+        font-size: 27px;
+    }
+
+    .container {
+        width: 92%;
+    }
+
+    .architecture pre {
+        font-size: 11px;
+    }
+}
 </style>
 </head>
+
 <body>
+
 <header>
-<h1>{{ app_name }}</h1>
-<p><b>{{ company }}</b> | Environment: {{ app_env }}</p>
-<p>GitHub → GitHub Actions → Docker Hub → Argo CD → Helm → Kubernetes → Prometheus → Grafana → Loki → Alertmanager</p>
+
+    <h1>{{ app_name }}</h1>
+
+    <p>
+        <b>{{ company }}</b>
+        |
+        Environment: <b>{{ app_env }}</b>
+    </p>
+
+    <p class="subtitle">
+        Production-Grade End-to-End DevOps Platform on AWS EKS
+    </p>
+
+    <p class="small">
+        GitHub → GitHub Actions → Docker → Amazon ECR → Argo CD → Helm → EKS
+    </p>
+
 </header>
+
 
 <div class="container">
 
+
+<!-- ========================= -->
+<!-- PLATFORM STATUS -->
+<!-- ========================= -->
+
 <div class="cards">
-<div class="card"><h3>Pods</h3><div class="value">{{ pod_count }}</div></div>
-<div class="card"><h3>Namespace</h3><div class="value">{{ namespace }}</div></div>
-<div class="card"><h3>Current Pod</h3><div>{{ hostname }}</div></div>
-<div class="card"><h3>CI/CD</h3><div class="value">SUCCESS</div></div>
-<div class="card"><h3>Argo CD</h3><div class="value">Healthy</div></div>
-<div class="card"><h3>Observability</h3><div class="value">Enabled</div><small>Prometheus • Grafana • Loki</small></div>
-<div class="card"><h3>Alerting</h3><div class="value">Active</div><small>Alertmanager + Gmail</small></div>
+
+    <div class="card">
+        <h3>Application Pods</h3>
+        <div class="value">{{ pod_count }}</div>
+        <div class="small">Running in Kubernetes</div>
+    </div>
+
+    <div class="card">
+        <h3>Namespace</h3>
+        <div class="value">{{ namespace }}</div>
+        <div class="small">Kubernetes environment</div>
+    </div>
+
+    <div class="card">
+        <h3>Current Pod</h3>
+        <div class="value">{{ hostname }}</div>
+        <div class="small">Application instance</div>
+    </div>
+
+    <div class="card">
+        <h3>CI Pipeline</h3>
+        <div class="value">SUCCESS</div>
+        <div class="small">GitHub Actions</div>
+    </div>
+
+    <div class="card">
+        <h3>Argo CD</h3>
+        <div class="value">HEALTHY</div>
+        <div class="small">GitOps deployment</div>
+    </div>
+
+    <div class="card">
+        <h3>Observability</h3>
+        <div class="value">ACTIVE</div>
+        <div class="small">
+            Prometheus + Grafana + Loki
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Alerting</h3>
+        <div class="value">ACTIVE</div>
+        <div class="small">
+            Alertmanager + Email
+        </div>
+    </div>
+
 </div>
+
+
+<!-- ========================= -->
+<!-- CI/CD PIPELINE -->
+<!-- ========================= -->
 
 <div class="section">
-<h2>⚡ CI/CD Pipeline</h2>
-<div class="pipeline">
-<div>GitHub → GitHub Actions</div>
-<div>GitHub Actions → Docker Hub</div>
-<div>Docker Hub → Argo CD</div>
-<div>Argo CD → Helm → Kubernetes</div>
-<div>Prometheus → Grafana → Loki → Alertmanager</div>
+
+    <h2>⚡ CI/CD Pipeline</h2>
+
+    <div class="pipeline">
+
+        <div class="pipeline-step">
+            <strong>1. GitHub</strong>
+            <span>Source code and GitOps configuration</span>
+        </div>
+
+        <div class="pipeline-step">
+            <strong>2. GitHub Actions</strong>
+            <span>Test, validate and build application</span>
+        </div>
+
+        <div class="pipeline-step">
+            <strong>3. Docker</strong>
+            <span>Containerize Flask application</span>
+        </div>
+
+        <div class="pipeline-step">
+            <strong>4. Amazon ECR</strong>
+            <span>Store immutable container images</span>
+        </div>
+
+        <div class="pipeline-step">
+            <strong>5. Argo CD</strong>
+            <span>GitOps continuous delivery</span>
+        </div>
+
+        <div class="pipeline-step">
+            <strong>6. Helm</strong>
+            <span>Package and configure Kubernetes resources</span>
+        </div>
+
+        <div class="pipeline-step">
+            <strong>7. Amazon EKS</strong>
+            <span>Run and orchestrate application workloads</span>
+        </div>
+
+        <div class="pipeline-step">
+            <strong>8. AWS ALB</strong>
+            <span>Expose application to users</span>
+        </div>
+
+    </div>
+
 </div>
-</div>
+
+
+<!-- ========================= -->
+<!-- APPLICATION ARCHITECTURE -->
+<!-- ========================= -->
 
 <div class="section">
-<h2>📈 Observability</h2>
-<ul>
-<li>✅ Prometheus Metrics</li>
-<li>✅ Grafana Dashboards</li>
-<li>✅ Loki Centralized Logs</li>
-<li>✅ Promtail Log Collection</li>
-<li>✅ Alertmanager Email Notifications</li>
-</ul>
+
+    <h2>🏗 Application Architecture</h2>
+
+    <div class="architecture">
+
+<pre>
+Developer
+    |
+    v
+GitHub Repository
+    |
+    v
+GitHub Actions
+    |
+    +----> Tests
+    |
+    +----> Docker Build
+    |
+    +----> Security Validation
+    |
+    v
+Amazon ECR
+    |
+    v
+Git / Helm Desired State
+    |
+    v
+Argo CD
+    |
+    v
+Helm
+    |
+    v
+Amazon EKS
+    |
+    +----------------------+
+    |                      |
+    v                      v
+Deployment              Kubernetes Service
+    |                      |
+    +----------+-----------+
+               |
+               v
+       AWS Load Balancer
+          Controller
+               |
+               v
+          AWS ALB
+               |
+               v
+        Flask Application
+</pre>
+
+    </div>
+
 </div>
+
+
+<!-- ========================= -->
+<!-- OBSERVABILITY -->
+<!-- ========================= -->
 
 <div class="section">
-<h2>🛠 Technology Stack</h2>
-<span class="badge">Flask</span>
-<span class="badge">GitHub</span>
-<span class="badge">GitHub Actions</span>
-<span class="badge">Docker</span>
-<span class="badge">Docker Hub</span>
-<span class="badge">Helm</span>
-<span class="badge">Kubernetes</span>
-<span class="badge">Argo CD</span>
-<span class="badge">NGINX Ingress</span>
-<span class="badge">Prometheus</span>
-<span class="badge">Grafana</span>
-<span class="badge">Loki</span>
-<span class="badge">Promtail</span>
-<span class="badge">Alertmanager</span>
+
+    <h2>📈 Observability Architecture</h2>
+
+    <div class="architecture">
+
+<pre>
+                    Flask Application
+                           |
+                    +------+------+
+                    |             |
+                    v             v
+                /metrics        Logs
+                    |             |
+                    v             v
+              ServiceMonitor   Promtail
+                    |             |
+                    v             v
+                Prometheus       Loki
+                    |             |
+                    +------+------+
+                           |
+                           v
+                        Grafana
+                           |
+                    +------+------+
+                    |             |
+                    v             v
+               Dashboards    Visualization
+
+
+Prometheus
+     |
+     | Alert Rules
+     v
+Alertmanager
+     |
+     v
+Email Notifications
+</pre>
+
+    </div>
+
 </div>
 
-<div class="section links">
-<h2>🔗 Quick Access</h2>
-<a href="http://flask.local">Flask App</a>
-<a href="http://argocd.local">Argo CD</a>
-<a href="http://grafana.local">Grafana</a>
-<a href="http://prometheus.local">Prometheus</a>
-<a href="http://alertmanager.local">Alertmanager</a>
+
+<!-- ========================= -->
+<!-- MONITORING STATUS -->
+<!-- ========================= -->
+
+<div class="section">
+
+    <h2>🔍 Monitoring & Observability</h2>
+
+    <ul class="status-list">
+
+        <li>
+            <span class="success">✅</span>
+            Prometheus Metrics
+        </li>
+
+        <li>
+            <span class="success">✅</span>
+            Flask <code>/metrics</code> Endpoint
+        </li>
+
+        <li>
+            <span class="success">✅</span>
+            Kubernetes ServiceMonitor
+        </li>
+
+        <li>
+            <span class="success">✅</span>
+            Grafana Dashboards
+        </li>
+
+        <li>
+            <span class="success">✅</span>
+            Loki Centralized Logging
+        </li>
+
+        <li>
+            <span class="success">✅</span>
+            Promtail Log Collection
+        </li>
+
+        <li>
+            <span class="success">✅</span>
+            PrometheusRule Alerting
+        </li>
+
+        <li>
+            <span class="success">✅</span>
+            Alertmanager Email Notifications
+        </li>
+
+    </ul>
+
 </div>
+
+
+<!-- ========================= -->
+<!-- KUBERNETES -->
+<!-- ========================= -->
+
+<div class="section">
+
+    <h2>☸️ Kubernetes Platform</h2>
+
+    <div class="badges">
+
+        <span class="badge">Amazon EKS</span>
+        <span class="badge">Deployment</span>
+        <span class="badge">Service</span>
+        <span class="badge">Ingress</span>
+        <span class="badge">HPA</span>
+        <span class="badge">PDB</span>
+        <span class="badge">Startup Probe</span>
+        <span class="badge">Readiness Probe</span>
+        <span class="badge">Liveness Probe</span>
+        <span class="badge">ConfigMap</span>
+        <span class="badge">Secret</span>
+        <span class="badge">ServiceAccount</span>
+        <span class="badge">RBAC</span>
+        <span class="badge">ServiceMonitor</span>
+        <span class="badge">PrometheusRule</span>
+
+    </div>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- TECHNOLOGY STACK -->
+<!-- ========================= -->
+
+<div class="section">
+
+    <h2>🛠 Technology Stack</h2>
+
+    <div class="badges">
+
+        <span class="badge">Python</span>
+        <span class="badge">Flask</span>
+        <span class="badge">Docker</span>
+        <span class="badge">Amazon ECR</span>
+        <span class="badge">Amazon EKS</span>
+        <span class="badge">Helm</span>
+        <span class="badge">GitHub</span>
+        <span class="badge">GitHub Actions</span>
+        <span class="badge">Argo CD</span>
+        <span class="badge">AWS ALB</span>
+        <span class="badge">AWS Load Balancer Controller</span>
+        <span class="badge">Prometheus</span>
+        <span class="badge">Grafana</span>
+        <span class="badge">Loki</span>
+        <span class="badge">Promtail</span>
+        <span class="badge">Alertmanager</span>
+
+    </div>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- SECURITY / RELIABILITY -->
+<!-- ========================= -->
+
+<div class="section">
+
+    <h2>🔐 Production Engineering</h2>
+
+    <ul class="status-list">
+
+        <li>✅ Immutable container image tags</li>
+        <li>✅ GitOps-based deployment</li>
+        <li>✅ Argo CD automated synchronization</li>
+        <li>✅ Argo CD self-healing</li>
+        <li>✅ Helm-based configuration</li>
+        <li>✅ Kubernetes RBAC</li>
+        <li>✅ Resource requests and limits</li>
+        <li>✅ Startup / readiness / liveness probes</li>
+        <li>✅ Rolling deployment strategy</li>
+        <li>✅ PodDisruptionBudget</li>
+        <li>✅ Horizontal Pod Autoscaling</li>
+        <li>✅ Prometheus monitoring</li>
+        <li>✅ Centralized logging with Loki</li>
+        <li>✅ Alertmanager notifications</li>
+
+    </ul>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- QUICK ACCESS -->
+<!-- ========================= -->
+
+<div class="section">
+
+    <h2>🔗 Quick Access</h2>
+
+    <div class="links">
+
+        <a href="/">Flask Application</a>
+
+        <a href="/health">Health Check</a>
+
+        <a href="/metrics">Prometheus Metrics</a>
+
+        <a href="http://argocd.local">Argo CD</a>
+
+        <a href="http://grafana.local">Grafana</a>
+
+        <a href="http://prometheus.local">Prometheus</a>
+
+        <a href="http://alertmanager.local">Alertmanager</a>
+
+    </div>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- ENDPOINTS -->
+<!-- ========================= -->
+
+<div class="section">
+
+    <h2>🌐 Application Endpoints</h2>
+
+    <div class="architecture">
+
+<pre>
+GET /
+    Application dashboard
+
+GET /health
+    Kubernetes health checks
+
+GET /metrics
+    Prometheus application metrics
+</pre>
+
+    </div>
+
+</div>
+
+
+</div>
+
 
 <footer>
-<h3>Designed & Developed by Nandakumar</h3>
-<p>Production Grade End-to-End DevOps Platform</p>
-<p>Docker • Kubernetes • Helm • GitHub Actions • Argo CD • Prometheus • Grafana • Loki • Alertmanager</p>
+
+    <h3>Designed & Developed by Nandakumar</h3>
+
+    <p>
+        Production-Grade End-to-End DevOps Platform
+    </p>
+
+    <p>
+        GitHub • GitHub Actions • Docker • Amazon ECR • Amazon EKS
+        • Helm • Argo CD • AWS ALB
+    </p>
+
+    <p>
+        Prometheus • Grafana • Loki • Promtail • Alertmanager
+    </p>
+
 </footer>
-</div>
+
 </body>
 </html>
+```
