@@ -86,3 +86,9 @@ variable "max_nodes" {
   type        = number
   default     = 3
 }
+
+variable "grafana_smtp_password" {
+  description = "Grafana SMTP password"
+  type        = string
+  sensitive   = true
+}

@@ -1,0 +1,311 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd.argoproj.io/hydrate: normal
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"argoproj.io/v1alpha1","kind":"Application","metadata":{"annotations":{},"name":"my-python-app","namespace":"argocd"},"spec":{"destination":{"namespace":"dev","server":"https://kubernetes.default.svc"},"project":"default","source":{"path":"flask-chart","repoURL":"https://github.com/nanda9/flask-python-app.git","targetRevision":"main"},"syncPolicy":{"automated":{"prune":true,"selfHeal":true},"syncOptions":["CreateNamespace=true"]}}}
+  creationTimestamp: "2026-08-25T02:40:06Z"
+  generation: 1925
+  name: my-python-app
+  namespace: argocd
+  resourceVersion: "1567068"
+  uid: 637ad937-0886-445c-b6e1-b17de15b80fd
+spec:
+  destination:
+    namespace: dev
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: flask-chart
+    repoURL: https://github.com/nanda9/flask-python-app.git
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+status:
+  controllerNamespace: argocd
+  health:
+    lastTransitionTime: "2026-08-27T02:43:51Z"
+    status: Healthy
+  history:
+  - deployStartedAt: "2026-08-25T02:40:10Z"
+    deployedAt: "2026-08-25T02:40:13Z"
+    id: 0
+    initiatedBy:
+      automated: true
+    revision: ead77f2818527407dd8b45c8516daee8089630f7
+    source:
+      path: flask-chart
+      repoURL: https://github.com/nanda9/flask-python-app.git
+      targetRevision: main
+  - deployStartedAt: "2026-08-25T03:03:07Z"
+    deployedAt: "2026-08-25T03:03:08Z"
+    id: 1
+    initiatedBy:
+      automated: true
+    revision: 97fd3b1f67442312102ce9d3dc3da0e8ec962fdc
+    source:
+      path: flask-chart
+      repoURL: https://github.com/nanda9/flask-python-app.git
+      targetRevision: main
+  - deployStartedAt: "2026-08-25T03:09:05Z"
+    deployedAt: "2026-08-25T03:09:05Z"
+    id: 2
+    initiatedBy:
+      automated: true
+    revision: 7987334ad616abd5c35b0d0ed8601d760069c81e
+    source:
+      path: flask-chart
+      repoURL: https://github.com/nanda9/flask-python-app.git
+      targetRevision: main
+  - deployStartedAt: "2026-08-25T03:15:19Z"
+    deployedAt: "2026-08-25T03:15:20Z"
+    id: 3
+    initiatedBy:
+      automated: true
+    revision: ae55343f4fab406762c9ccad7e1169fd7b0ed9c7
+    source:
+      path: flask-chart
+      repoURL: https://github.com/nanda9/flask-python-app.git
+      targetRevision: main
+  - deployStartedAt: "2026-08-27T01:37:30Z"
+    deployedAt: "2026-08-27T01:37:31Z"
+    id: 4
+    initiatedBy:
+      automated: true
+    revision: b9a7aba6eaadae3676f7de8af527e29f4d69c085
+    source:
+      path: flask-chart
+      repoURL: https://github.com/nanda9/flask-python-app.git
+      targetRevision: main
+  - deployStartedAt: "2026-08-27T01:44:09Z"
+    deployedAt: "2026-08-27T01:44:10Z"
+    id: 5
+    initiatedBy:
+      automated: true
+    revision: 9b9bed84bd0e2c80ca6b4cde19ba14fc8e1b81f8
+    source:
+      path: flask-chart
+      repoURL: https://github.com/nanda9/flask-python-app.git
+      targetRevision: main
+  - deployStartedAt: "2026-08-27T02:38:03Z"
+    deployedAt: "2026-08-27T02:38:05Z"
+    id: 6
+    initiatedBy:
+      automated: true
+    revision: 9168d6206c3218e1e4a69282c35d55834e95592c
+    source:
+      path: flask-chart
+      repoURL: https://github.com/nanda9/flask-python-app.git
+      targetRevision: main
+  - deployStartedAt: "2026-08-27T02:43:39Z"
+    deployedAt: "2026-08-27T02:43:40Z"
+    id: 7
+    initiatedBy:
+      username: admin
+    revision: 6343352950efa399f9d0b511520f79ed5ac28726
+    source:
+      path: flask-chart
+      repoURL: https://github.com/nanda9/flask-python-app.git
+      targetRevision: main
+  operationState:
+    finishedAt: "2026-08-27T02:43:40Z"
+    message: successfully synced (all tasks run)
+    operation:
+      initiatedBy:
+        username: admin
+      retry: {}
+      sync:
+        revision: 6343352950efa399f9d0b511520f79ed5ac28726
+        source:
+          path: flask-chart
+          repoURL: https://github.com/nanda9/flask-python-app.git
+          targetRevision: main
+        syncOptions:
+        - CreateNamespace=true
+        syncStrategy:
+          hook: {}
+    phase: Succeeded
+    startedAt: "2026-08-27T02:43:39Z"
+    syncResult:
+      resources:
+      - group: policy
+        hookPhase: Running
+        kind: PodDisruptionBudget
+        message: poddisruptionbudget.policy/my-python-app-flask-chart-pdb configured
+        name: my-python-app-flask-chart-pdb
+        namespace: dev
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: ""
+        hookPhase: Running
+        kind: ServiceAccount
+        message: serviceaccount/flask-sa unchanged
+        name: flask-sa
+        namespace: dev
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: ""
+        hookPhase: Running
+        kind: Secret
+        message: secret/flask-secret configured
+        name: flask-secret
+        namespace: dev
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: ""
+        hookPhase: Running
+        kind: ConfigMap
+        message: configmap/flask-config unchanged
+        name: flask-config
+        namespace: dev
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: rbac.authorization.k8s.io
+        hookPhase: Running
+        kind: Role
+        message: role.rbac.authorization.k8s.io/flask-pod-reader reconciledrole.rbac.authorization.k8s.io/flask-pod-reader
+          unchanged
+        name: flask-pod-reader
+        namespace: dev
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: rbac.authorization.k8s.io
+        hookPhase: Running
+        kind: RoleBinding
+        message: rolebinding.rbac.authorization.k8s.io/flask-pod-reader-binding reconciledrolebinding.rbac.authorization.k8s.io/flask-pod-reader-binding
+          unchanged
+        name: flask-pod-reader-binding
+        namespace: dev
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: ""
+        hookPhase: Running
+        kind: Service
+        message: service/my-python-app-flask-chart unchanged
+        name: my-python-app-flask-chart
+        namespace: dev
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: apps
+        hookPhase: Running
+        images:
+        - 405804178912.dkr.ecr.us-east-1.amazonaws.com/watchtower:017ef10109db246444d4e97eac278177c77ba10f
+        kind: Deployment
+        message: deployment.apps/my-python-app-flask-chart configured
+        name: my-python-app-flask-chart
+        namespace: dev
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: networking.k8s.io
+        hookPhase: Running
+        kind: Ingress
+        message: ingress.networking.k8s.io/my-python-app-flask-chart unchanged
+        name: my-python-app-flask-chart
+        namespace: dev
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: monitoring.coreos.com
+        hookPhase: Running
+        kind: ServiceMonitor
+        message: servicemonitor.monitoring.coreos.com/my-python-app-flask-chart unchanged
+        name: my-python-app-flask-chart
+        namespace: dev
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      revision: 6343352950efa399f9d0b511520f79ed5ac28726
+      source:
+        path: flask-chart
+        repoURL: https://github.com/nanda9/flask-python-app.git
+        targetRevision: main
+  reconciledAt: "2026-08-29T03:27:53Z"
+  resourceHealthSource: appTree
+  resources:
+  - kind: ConfigMap
+    name: flask-config
+    namespace: dev
+    status: Synced
+    version: v1
+  - kind: Secret
+    name: flask-secret
+    namespace: dev
+    status: Synced
+    version: v1
+  - kind: Service
+    name: my-python-app-flask-chart
+    namespace: dev
+    status: Synced
+    version: v1
+  - kind: ServiceAccount
+    name: flask-sa
+    namespace: dev
+    status: Synced
+    version: v1
+  - group: apps
+    kind: Deployment
+    name: my-python-app-flask-chart
+    namespace: dev
+    status: Synced
+    version: v1
+  - group: monitoring.coreos.com
+    kind: ServiceMonitor
+    name: my-python-app-flask-chart
+    namespace: dev
+    status: Synced
+    version: v1
+  - group: networking.k8s.io
+    kind: Ingress
+    name: my-python-app-flask-chart
+    namespace: dev
+    status: Synced
+    version: v1
+  - group: policy
+    kind: PodDisruptionBudget
+    name: my-python-app-flask-chart-pdb
+    namespace: dev
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: Role
+    name: flask-pod-reader
+    namespace: dev
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: RoleBinding
+    name: flask-pod-reader-binding
+    namespace: dev
+    status: Synced
+    version: v1
+  sourceHydrator: {}
+  sourceType: Helm
+  summary:
+    externalURLs:
+    - http://k8s-dev-mypython-e63e166f3f-1207632567.us-east-1.elb.amazonaws.com/
+    images:
+    - 405804178912.dkr.ecr.us-east-1.amazonaws.com/watchtower:017ef10109db246444d4e97eac278177c77ba10f
+  sync:
+    comparedTo:
+      destination:
+        namespace: dev
+        server: https://kubernetes.default.svc
+      source:
+        path: flask-chart
+        repoURL: https://github.com/nanda9/flask-python-app.git
+        targetRevision: main
+    revision: 6343352950efa399f9d0b511520f79ed5ac28726
+    status: Synced

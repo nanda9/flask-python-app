@@ -6,7 +6,6 @@ alertmanager:
       smtp_smarthost: "smtp.gmail.com:587"
       smtp_from: "nandakumar.jraju@gmail.com"
       smtp_auth_username: "nandakumar.jraju@gmail.com"
-      smtp_auth_password: "dzmfczlfthmmbgio"
       smtp_require_tls: true
 
     route:
@@ -28,3 +27,41 @@ alertmanager:
             send_resolved: true
 
       - name: "null"
+
+grafana:
+  env:
+    GF_SMTP_PASSWORD: $__file{/etc/secrets/smtp-password/smtp-password}
+
+  extraSecretMounts:
+    - name: grafana-smtp
+      secretName: grafana-smtp
+      defaultMode: 0440
+      mountPath: /etc/secrets/smtp-password
+      readOnly: true
+
+  persistence:
+    enabled: true
+    type: sts
+    storageClassName: gp2
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+
+  grafana.ini:
+    smtp:
+      enabled: true
+      host: smtp.gmail.com:587
+      user: nandakumar.jraju@gmail.com
+      password: $__env{GF_SMTP_PASSWORD}
+      from_address: nandakumar.jraju@gmail.com
+      from_name: Grafana
+      startTLS_policy: Mandatory
+
+  additionalDataSources:
+    - name: CloudWatch
+      type: cloudwatch
+      uid: cloudwatch
+      access: proxy
+      jsonData:
+        authType: default
+        defaultRegion: us-east-1

@@ -9,7 +9,7 @@ replicaCount: 1
 image:
   repository: 405804178912.dkr.ecr.us-east-1.amazonaws.com/watchtower
   # This sets the pull policy for images.
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: b9a7aba6eaadae3676f7de8af527e29f4d69c085
 
