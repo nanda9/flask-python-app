@@ -91,4 +91,5 @@ variable "grafana_smtp_password" {
   description = "Grafana SMTP password"
   type        = string
   sensitive   = true
+  default     = ""
 }
