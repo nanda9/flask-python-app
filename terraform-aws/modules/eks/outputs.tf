@@ -22,3 +22,8 @@ output "cluster_certificate_authority_data" {
   description = "Base64 encoded EKS cluster CA certificate"
   value       = aws_eks_cluster.this.certificate_authority[0].data
 }
+
+output "aws_load_balancer_controller_role_arn" {
+  description = "IAM role ARN for AWS Load Balancer Controller"
+  value       = aws_iam_role.aws_load_balancer_controller.arn
+}

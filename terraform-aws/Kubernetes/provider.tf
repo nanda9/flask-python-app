@@ -29,6 +29,14 @@ data "aws_eks_cluster_auth" "this" {
   name = "watchtower-dev"
 }
 
+data "aws_eks_cluster" "this" {
+  name = var.cluster_name
+}
+
+data "aws_vpc" "eks" {
+  id = data.aws_eks_cluster.this.vpc_config[0].vpc_id
+}
+
 provider "kubernetes" {
   host = data.aws_eks_cluster.this.endpoint
 
