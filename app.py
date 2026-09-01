@@ -69,9 +69,14 @@ def home():
 
         v1 = client.CoreV1Api()
 
+        pod_label_selector = os.getenv(
+            "POD_LABEL_SELECTOR",
+            "app.kubernetes.io/instance=my-python-app",
+        )
+
         pods = v1.list_namespaced_pod(
             namespace=namespace,
-            label_selector="app=watchtower",
+            label_selector=pod_label_selector,
         )
 
         running_pods = [

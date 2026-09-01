@@ -10,3 +10,4 @@ data:
   APP_ENV: {{ .Values.env.APP_ENV | quote }}
   COMPANY: {{ .Values.env.COMPANY | quote }}
   NAMESPACE: {{ .Values.env.NAMESPACE | quote }}
+  POD_LABEL_SELECTOR: {{ .Values.env.POD_LABEL_SELECTOR | quote }}
