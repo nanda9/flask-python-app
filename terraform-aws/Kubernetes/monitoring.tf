@@ -8,6 +8,6 @@ resource "helm_release" "monitoring" {
   create_namespace = true
 
   values = [
-    file("${path.module}/../monitoring/monitoring-values.yaml")
+    file("${path.module}/../../monitoring/monitoring-values.yaml")
   ]
 }

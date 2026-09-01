@@ -1,46 +1,46 @@
+# =========================
 # Python
+# =========================
 __pycache__/
 *.py[cod]
 *.pyo
 .pytest_cache/
+.ruff_cache/
 .coverage
 htmlcov/
 
+# =========================
 # Virtual environments
+# =========================
 venv/
 .venv/
 env/
 
+# =========================
 # macOS
+# =========================
 .DS_Store
 
+# =========================
 # IDE
+# =========================
 .vscode/
 .idea/
 
+# =========================
 # Environment / secrets
+# =========================
 .env
 .env.*
 !.env.example
 
+# =========================
 # Terraform
-.terraform/
+# =========================
+**/.terraform/
+*.tfplan
 *.tfstate
 *.tfstate.*
-crash.log
-
-# Logs / temporary files
-*.log
-*.tmp
-*.swp
-# Terraform
-.terraform/
-*.tfstate
-*.tfstate.*
-crash.log
-crash.*.log
-
-# Terraform variable files - may contain secrets
 *.tfvars
 *.tfvars.json
 
@@ -53,3 +53,17 @@ override.tf.json
 # Sensitive Terraform CLI config
 .terraformrc
 terraform.rc
+
+# =========================
+# Logs / temporary files
+# =========================
+*.log
+*.tmp
+*.swp
+
+# =========================
+# Generated / local files
+# =========================
+rendered.yaml
+my-python-app-argocd-backup.yaml
+trivy.json
