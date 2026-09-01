@@ -291,7 +291,7 @@ footer h3 {
         <h3>Observability</h3>
         <div class="value">ACTIVE</div>
         <div class="small">
-            Prometheus + Grafana + Loki
+            Prometheus + Grafana
         </div>
     </div>
 
@@ -442,11 +442,11 @@ Deployment              Kubernetes Service
                     v             v
                 /metrics        Logs
                     |             |
-                    v             v
-              ServiceMonitor   Promtail
+                    v             |
+              ServiceMonitor      |
                     |             |
-                    v             v
-                Prometheus       Loki
+                    v             |
+                Prometheus        |
                     |             |
                     +------+------+
                            |
@@ -502,11 +502,6 @@ Email Notifications
         <li>
             <span class="success">✅</span>
             Grafana Dashboards
-        </li>
-
-        <li>
-            <span class="success">✅</span>
-            Loki Centralized Logging
         </li>
 
         <li>
@@ -583,8 +578,6 @@ Email Notifications
         <span class="badge">AWS Load Balancer Controller</span>
         <span class="badge">Prometheus</span>
         <span class="badge">Grafana</span>
-        <span class="badge">Loki</span>
-        <span class="badge">Promtail</span>
         <span class="badge">Alertmanager</span>
 
     </div>
@@ -614,7 +607,6 @@ Email Notifications
         <li>✅ PodDisruptionBudget</li>
         <li>✅ Horizontal Pod Autoscaling</li>
         <li>✅ Prometheus monitoring</li>
-        <li>✅ Centralized logging with Loki</li>
         <li>✅ Alertmanager notifications</li>
 
     </ul>
