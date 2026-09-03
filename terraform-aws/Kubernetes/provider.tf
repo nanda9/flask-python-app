@@ -18,23 +18,15 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
-}
-
-data "aws_eks_cluster" "this" {
-  name = "watchtower-dev"
-}
-
-data "aws_eks_cluster_auth" "this" {
-  name = "watchtower-dev"
+  region = var.aws_region
 }
 
 data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
 
-data "aws_vpc" "eks" {
-  id = data.aws_eks_cluster.this.vpc_config[0].vpc_id
+data "aws_eks_cluster_auth" "this" {
+  name = var.cluster_name
 }
 
 provider "kubernetes" {

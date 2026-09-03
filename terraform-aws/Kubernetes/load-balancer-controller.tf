@@ -1,10 +1,20 @@
+data "terraform_remote_state" "aws" {
+  backend = "s3"
+
+  config = {
+    bucket = "nanda-devops-terraform-state-405804178912"
+    key    = "dev/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
 resource "kubernetes_service_account_v1" "aws_load_balancer_controller" {
   metadata {
     name      = "aws-load-balancer-controller"
     namespace = "kube-system"
 
     annotations = {
-      "eks.amazonaws.com/role-arn" = module.eks.aws_load_balancer_controller_role_arn
+      "eks.amazonaws.com/role-arn" = "data.terraform_remote_state.aws.outputs.aws_load_balancer_controller_role_arn"
     }
   }
 }
