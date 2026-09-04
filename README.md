@@ -1,138 +1,730 @@
 # Flask Python Application — Production-Grade DevOps on AWS EKS
 
-A production-oriented Flask application deployed on **Amazon EKS** using **Docker, Amazon ECR, Kubernetes, Helm, GitHub Actions, Argo CD, and Terraform**.
+A production-style DevOps project demonstrating how to build, containerize, deploy, monitor, and manage a Flask application on Amazon EKS using modern DevOps and GitOps practices.
 
-The project demonstrates an end-to-end DevOps workflow from source-code commit through containerization, continuous integration, container image publishing, GitOps-based continuous delivery, Kubernetes orchestration, AWS load balancing, application monitoring, alerting, and infrastructure as code.
-
----
-
-## Architecture
-
-### End-to-End Application Delivery
+## End-to-End Architecture
 
 ```text
-                         Developer
-                            |
-                            v
-                     GitHub Repository
-                            |
-                            v
-                    GitHub Actions CI
-                            |
-              +-------------+-------------+
-              |                           |
-              v                           v
-          Run Tests                  Build Docker Image
-                                          |
-                                          v
-                                      Amazon ECR
-                                          |
-                                          v
-                                  Update Git / Helm
-                                          |
-                                          v
-                                      Argo CD
-                                          |
-                                          v
-                                        Helm
-                                          |
-                                          v
-                                      Amazon EKS
-                                          |
-                                  +-------+-------+
-                                  |               |
-                                  v               v
-                             Flask Pods       Kubernetes
-                                             Service
-                                                |
-                                                v
-                                        AWS ALB / Ingress
-                                                |
-                                                v
-                                              Users
+Developer
+   |
+   v
+GitHub
+   |
+   v
+Pull Request
+   |
+   v
+GitHub Actions
+   |
+   +--> Tests
+   +--> Docker Build
+   +--> Security Scan
+   +--> AWS OIDC
+   |
+   v
+Amazon ECR
+   |
+   v
+Argo CD / GitOps
+   |
+   v
+Helm
+   |
+   v
+Amazon EKS
+   |
+   v
+AWS Load Balancer Controller
+   |
+   v
+Application Load Balancer
+   |
+   v
+Flask Application
+   |
+   +------------------+
+   |                  |
+   v                  v
+Prometheus         CloudWatch
+   |                  |
+   v                  |
+Grafana <------------+
+   |
+   +--> Loki
+   |
+   +--> Alertmanager
 ```
 
-### Infrastructure Provisioning
+## Project Goals
+
+This project demonstrates:
+
+- Python Flask application
+- Linux and Git fundamentals
+- Docker containerization
+- Multi-stage Docker builds
+- Kubernetes
+- Amazon EKS
+- Helm
+- Argo CD
+- GitOps
+- GitHub Actions
+- Amazon ECR
+- AWS IAM
+- GitHub Actions OIDC
+- EKS IRSA
+- AWS Load Balancer Controller
+- Application Load Balancer
+- Kubernetes RBAC
+- Terraform
+- Terraform remote state
+- Prometheus
+- Grafana
+- Loki
+- Alertmanager
+- AWS CloudWatch
+- Trivy
+- Cosign
+
+## Technology Stack
+
+| Category | Technology |
+|---|---|
+| Application | Python / Flask |
+| Testing | pytest |
+| Container | Docker |
+| Registry | Amazon ECR |
+| Orchestration | Kubernetes |
+| Kubernetes Platform | Amazon EKS |
+| Packaging | Helm |
+| GitOps / CD | Argo CD |
+| CI | GitHub Actions |
+| IaC | Terraform |
+| Load Balancer | AWS ALB |
+| LB Controller | AWS Load Balancer Controller |
+| Metrics | Prometheus |
+| Visualization | Grafana |
+| Logging | Loki |
+| Alerting | Alertmanager |
+| AWS Monitoring | CloudWatch |
+| Image Security | Trivy / Cosign |
+| Authentication | AWS IAM / OIDC / IRSA |
+
+## Application
+
+The project contains a Flask web application.
+
+### Endpoints
 
 ```text
-                    Terraform
-                       |
-          +------------+------------+
-          |            |            |
-          v            v            v
-         VPC          EKS          IAM
-          |            |            |
-          |            +------------+
-          |                 |
-          v                 v
-       Subnets         Worker Nodes
-                            |
-                            v
-                 AWS Load Balancer
-                    Controller
+/
 ```
 
-### Monitoring and Alerting
+Main application dashboard.
 
 ```text
-                     Flask Application
-                            |
-                            | /metrics
-                            v
-                      ServiceMonitor
-                            |
-                            v
-                        Prometheus
-                       /          \
-                      /            \
-                     v              v
-                 Grafana       Alertmanager
-                     |
-                     v
-                Dashboards
+/health
 ```
 
----
+Health-check endpoint.
 
-# Technology Stack
+```text
+/metrics
+```
 
-| Area                   | Technology                    |
-| ---------------------- | ----------------------------- |
-| Application            | Python / Flask                |
-| Testing                | pytest                        |
-| Containerization       | Docker                        |
-| Container Registry     | Amazon ECR                    |
-| Kubernetes             | Amazon EKS                    |
-| Package Management     | Helm                          |
-| CI                     | GitHub Actions                |
-| CD / GitOps            | Argo CD                       |
-| Infrastructure as Code | Terraform                     |
-| Load Balancing         | AWS Application Load Balancer |
-| AWS Integration        | AWS Load Balancer Controller  |
-| Monitoring             | Prometheus                    |
-| Visualization          | Grafana                       |
-| Alerting               | Alertmanager                  |
-| Application Metrics    | prometheus-client             |
-| Kubernetes API         | Kubernetes Python client      |
-| Security Scanning      | Trivy                         |
-| AWS Authentication     | GitHub Actions OIDC           |
+Prometheus metrics endpoint.
 
----
+The application exposes metrics including:
 
-# Project Structure
+```text
+flask_requests_total
+flask_request_duration_seconds
+```
+
+These metrics allow monitoring of request rate, request count, and application latency.
+
+## Docker
+
+Docker provides a consistent runtime environment across development, CI, and Kubernetes.
+
+### Build
+
+```bash
+docker build -t watchtower .
+```
+
+### Run
+
+```bash
+docker run -p 5000:5000 watchtower
+```
+
+Application:
+
+```text
+http://localhost:5000
+```
+
+## Amazon ECR
+
+The application image is stored in Amazon ECR.
+
+Repository:
+
+```text
+watchtower
+```
+
+Example image:
+
+```text
+405804178912.dkr.ecr.us-east-1.amazonaws.com/watchtower:<git-sha>
+```
+
+Images are tagged using the Git commit SHA so deployments are traceable and immutable.
+
+## Kubernetes
+
+The application runs in Amazon EKS.
+
+Main namespaces:
+
+```text
+dev
+monitoring
+argocd
+```
+
+The application deployment includes:
+
+- Deployment
+- Service
+- ConfigMap
+- ServiceAccount
+- RBAC
+- Ingress
+- HPA
+- PDB
+- ServiceMonitor
+- PrometheusRule
+
+### Traffic Flow
+
+```text
+Internet
+   |
+   v
+AWS ALB
+   |
+   v
+Kubernetes Ingress
+   |
+   v
+Kubernetes Service
+   |
+   v
+Flask Pod :5000
+```
+
+## Amazon EKS
+
+Cluster:
+
+```text
+watchtower-dev
+```
+
+Region:
+
+```text
+us-east-1
+```
+
+Configure kubectl:
+
+```bash
+aws eks update-kubeconfig \
+  --region us-east-1 \
+  --name watchtower-dev
+```
+
+Verify:
+
+```bash
+kubectl get nodes
+```
+
+## AWS Load Balancer Controller
+
+The AWS Load Balancer Controller watches Kubernetes Ingress resources and manages the AWS Application Load Balancer.
+
+It uses IAM Roles for Service Accounts (IRSA) instead of static AWS credentials.
+
+ServiceAccount:
+
+```text
+aws-load-balancer-controller
+```
+
+## Kubernetes RBAC
+
+The Flask application uses:
+
+```text
+ServiceAccount: flask-sa
+```
+
+RBAC grants the application permission to read Kubernetes pod information.
+
+Verify:
+
+```bash
+kubectl auth can-i \
+  list pods \
+  --as=system:serviceaccount:dev:flask-sa \
+  -n dev
+```
+
+Expected:
+
+```text
+yes
+```
+
+## Helm
+
+The application is packaged as the `flask-chart` Helm chart.
+
+The chart manages:
+
+- Deployment
+- Service
+- ConfigMap
+- ServiceAccount
+- RBAC
+- Ingress
+- HPA
+- PDB
+- ServiceMonitor
+- PrometheusRule
+
+Example:
+
+```bash
+helm upgrade --install my-python-app ./flask-chart \
+  -n dev \
+  --create-namespace
+```
+
+Environment-specific configuration can be maintained through Helm values files.
+
+## Argo CD
+
+Argo CD provides GitOps-based Continuous Delivery.
+
+```text
+Git Repository
+      |
+      v
+Argo CD
+      |
+      v
+Kubernetes
+```
+
+Argo CD continuously compares the desired state stored in Git with the actual Kubernetes state.
+
+Key capabilities:
+
+- Automated synchronization
+- Self-healing
+- Pruning
+- Git-based deployments
+- Drift detection
+- Kubernetes reconciliation
+
+## GitHub Actions
+
+GitHub Actions provides Continuous Integration.
+
+Typical pipeline:
+
+```text
+Checkout
+   |
+   v
+Tests
+   |
+   v
+Docker Build
+   |
+   v
+Security Scan
+   |
+   v
+AWS OIDC
+   |
+   v
+Push Image to ECR
+```
+
+Workflow files are located under:
+
+```text
+.github/workflows/
+```
+
+## GitHub Actions OIDC
+
+GitHub Actions authenticates to AWS using OIDC.
+
+```text
+GitHub Actions
+      |
+      v
+GitHub OIDC Token
+      |
+      v
+AWS IAM Trust Policy
+      |
+      v
+Assume IAM Role
+      |
+      v
+AWS Resources
+```
+
+This avoids storing long-lived AWS access keys in GitHub.
+
+## Terraform
+
+Terraform manages the infrastructure as code.
+
+The Terraform configuration is divided into two layers.
+
+### AWS Layer
+
+```text
+terraform-aws/
+```
+
+Responsible for AWS infrastructure such as:
+
+- VPC
+- Subnets
+- Internet Gateway
+- NAT Gateway
+- Route Tables
+- EKS
+- Node Groups
+- IAM
+- OIDC
+- ECR
+- AWS Load Balancer Controller IAM
+- Grafana CloudWatch IAM
+- GitHub Actions OIDC
+
+Commands:
+
+```bash
+cd terraform-aws
+
+terraform init
+terraform validate
+terraform fmt -recursive
+terraform plan
+terraform apply
+```
+
+### Kubernetes Layer
+
+```text
+terraform-aws/Kubernetes/
+```
+
+Responsible for resources that depend on the existing EKS cluster:
+
+- Argo CD
+- Prometheus
+- Grafana
+- Loki
+- Alertmanager
+- AWS Load Balancer Controller
+- Kubernetes namespaces
+- ServiceAccounts
+- RBAC
+- StorageClass
+- Flask application
+
+Commands:
+
+```bash
+cd terraform-aws/Kubernetes
+
+terraform init
+terraform validate
+terraform plan
+terraform apply
+```
+
+### Why Two Terraform Layers?
+
+The AWS layer creates the EKS cluster first.
+
+The Kubernetes layer connects to the already-created EKS cluster.
+
+This separation avoids cluster-dependent Kubernetes and Helm providers being evaluated before the EKS API exists.
+
+## Terraform Remote State
+
+Terraform state is stored remotely in Amazon S3.
+
+AWS layer:
+
+```text
+s3://nanda-devops-terraform-state-405804178912/dev/terraform.tfstate
+```
+
+Kubernetes layer:
+
+```text
+s3://nanda-devops-terraform-state-405804178912/kubernetes/terraform.tfstate
+```
+
+Remote state provides:
+
+- Persistent state
+- Centralized state management
+- Recovery
+- Collaboration
+- State locking
+
+## Monitoring
+
+The observability architecture is:
+
+```text
+Flask /metrics
+      |
+      v
+ServiceMonitor
+      |
+      v
+Prometheus
+      |
+      +------> Grafana
+      |
+      +------> Alertmanager
+
+Kubernetes Logs
+      |
+      v
+Loki
+      |
+      v
+Grafana
+```
+
+## Prometheus
+
+Prometheus scrapes the Flask `/metrics` endpoint through the ServiceMonitor.
+
+Useful queries:
+
+### Request Rate
+
+```promql
+rate(flask_requests_total[5m])
+```
+
+### Root Endpoint Rate
+
+```promql
+rate(flask_requests_total{exported_endpoint="/"}[5m])
+```
+
+### Health Endpoint Rate
+
+```promql
+rate(flask_requests_total{exported_endpoint="/health"}[5m])
+```
+
+### Total Root Requests
+
+```promql
+flask_requests_total{exported_endpoint="/"}
+```
+
+### Average Request Latency
+
+```promql
+rate(flask_request_duration_seconds_sum[5m])
+/
+rate(flask_request_duration_seconds_count[5m])
+```
+
+### Application Pod Count
+
+```promql
+count(
+  kube_pod_info{
+    namespace="dev",
+    pod=~"my-python-app.*"
+  }
+)
+```
+
+## Grafana
+
+Grafana provides dashboards for:
+
+- Kubernetes
+- Prometheus
+- Application metrics
+- Loki
+- Alertmanager
+- AWS CloudWatch
+
+Existing kube-prometheus-stack dashboards include:
+
+```text
+Kubernetes / Views / Global
+Kubernetes / Views / Namespaces
+Kubernetes / Views / Pods
+Kubernetes / Views / Nodes
+Prometheus
+Loki
+Alertmanager
+```
+
+## AWS CloudWatch Integration
+
+Grafana accesses AWS CloudWatch using EKS IRSA.
+
+```text
+Grafana
+   |
+   v
+monitoring-grafana ServiceAccount
+   |
+   v
+EKS IRSA
+   |
+   v
+AWS IAM Role
+   |
+   v
+CloudWatch
+```
+
+This avoids static AWS credentials inside Grafana.
+
+The IAM role provides read access to required CloudWatch metrics and logs.
+
+## Grafana Dashboard Backup
+
+The repository contains the imported CloudWatch dashboard:
+
+```text
+monitoring/grafana/dashboards/
+└── aws-cloudwatch-infrastructure-monitoring-grafana.json
+```
+
+The dashboard definition is stored in Git so it can be retained independently of the Grafana runtime database.
+
+Do not commit:
+
+```text
+grafana-backup.db
+```
+
+Also do not commit:
+
+```text
+*.tfvars
+*.tfstate
+*.tfstate.*
+.env
+AWS credentials
+private keys
+passwords
+tokens
+```
+
+## Loki
+
+Loki provides centralized Kubernetes log aggregation.
+
+```text
+Kubernetes Pods
+      |
+      v
+Loki
+      |
+      v
+Grafana
+```
+
+## Alertmanager
+
+Alertmanager receives alerts generated by Prometheus rules.
+
+```text
+Prometheus
+    |
+    v
+PrometheusRule
+    |
+    v
+Alertmanager
+```
+
+Alerts can be configured for:
+
+- Pod availability
+- High CPU
+- High memory
+- Application availability
+- Application error rate
+
+## Container Security
+
+Trivy can scan container images:
+
+```bash
+trivy image <image>
+```
+
+This helps identify vulnerabilities in:
+
+- Base images
+- OS packages
+- Python dependencies
+- Application dependencies
+
+## Cosign
+
+Cosign can sign container images.
+
+```text
+Docker Build
+     |
+     v
+Amazon ECR
+     |
+     v
+Cosign
+     |
+     v
+Signed Image
+```
+
+Image signing improves software supply-chain security.
+
+## Project Structure
 
 ```text
 flask-python-app/
-│
-├── app.py
-├── requirements.txt
-├── Dockerfile
-├── README.md
-├── .dockerignore
-├── .gitignore
-│
-├── tests/
-│   └── test_app.py
 │
 ├── .github/
 │   └── workflows/
@@ -143,1294 +735,482 @@ flask-python-app/
 │   └── application.yaml
 │
 ├── flask-chart/
-│   ├── Chart.yaml
-│   ├── values.yaml
+│   ├── templates/
+│   │   ├── deployment.yaml
+│   │   ├── service.yaml
+│   │   ├── ingress.yaml
+│   │   ├── serviceaccount.yaml
+│   │   ├── role.yaml
+│   │   ├── rolebinding.yaml
+│   │   ├── hpa.yaml
+│   │   ├── pdb.yaml
+│   │   ├── configmap.yaml
+│   │   ├── secret.yaml
+│   │   ├── servicemonitor.yaml
+│   │   └── prometheusrule.yaml
 │   │
-│   └── templates/
-│       ├── deployment.yaml
-│       ├── service.yaml
-│       ├── ingress.yaml
-│       ├── hpa.yaml
-│       ├── pdb.yaml
-│       ├── serviceaccount.yaml
-│       ├── flask-rbac.yaml
-│       ├── configmap.yaml
-│       ├── secret.yaml
-│       ├── servicemonitor.yaml
-│       └── prometheusrule.yaml
+│   ├── Chart.yaml
+│   └── values.yaml
 │
 ├── monitoring/
-│   ├── monitoring-values.yaml
-│   └── prometheus-values.yaml
+│   ├── grafana/
+│   │   └── dashboards/
+│   │       └── aws-cloudwatch-infrastructure-monitoring-grafana.json
+│   └── values/
 │
-├── static/
-│   ├── argocd.png
-│   ├── docker.png
-│   ├── github.png
-│   └── kubernetes.png
+├── terraform-aws/
+│   ├── bootstrap/
+│   ├── modules/
+│   │   └── eks/
+│   │       └── grafana-cloudwatch.tf
+│   │
+│   ├── Kubernetes/
+│   │   ├── backend.tf
+│   │   ├── provider.tf
+│   │   ├── variables.tf
+│   │   ├── argocd.tf
+│   │   ├── monitoring.tf
+│   │   ├── load-balancer-controller.tf
+│   │   └── ...
+│   │
+│   ├── backend.tf
+│   ├── provider.tf
+│   ├── versions.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── main.tf
 │
-├── templates/
-│   └── index.html
-│
-└── terraform-aws/
-    ├── main.tf
-    ├── variables.tf
-    ├── outputs.tf
-    ├── provider.tf
-    ├── versions.tf
-    ├── terraform.tfvars
-    └── modules/
-        ├── vpc/
-        ├── eks/
-        ├── ecr/
-        ├── github-oidc/
-        └── ...
+├── tests/
+├── app.py
+├── Dockerfile
+├── requirements.txt
+├── .gitignore
+└── README.md
 ```
 
----
+## Rebuild From Zero
 
-# Application
-
-The application is implemented using Python Flask.
-
-The application provides:
-
-```text
-GET /
-GET /health
-GET /metrics
-```
-
-## Application Endpoint
-
-```text
-GET /
-```
-
-The main application page provides application and environment information and can communicate with the Kubernetes API to retrieve information about running application pods.
-
-Application configuration uses environment variables such as:
-
-```text
-APP_NAME
-APP_ENV
-COMPANY
-NAMESPACE
-```
-
----
-
-# Health Endpoint
-
-```text
-GET /health
-```
-
-Example response:
-
-```json
-{
-  "status": "healthy"
-}
-```
-
-Kubernetes uses this endpoint for:
-
-* Startup probe
-* Readiness probe
-* Liveness probe
-
-These probes allow Kubernetes to determine whether the container has started successfully, is ready to receive traffic, and remains healthy.
-
----
-
-# Prometheus Metrics
-
-The Flask application exposes:
-
-```text
-GET /metrics
-```
-
-using the Python `prometheus-client` library.
-
-Example application metrics include:
-
-```text
-flask_requests_total
-flask_request_duration_seconds
-```
-
-These metrics allow Prometheus to monitor:
-
-* Request volume
-* Request latency
-* Endpoint traffic
-* HTTP methods
-* Application availability
-
-The application also exposes standard Python runtime metrics provided by the Prometheus client.
-
----
-
-# Docker
-
-The application is containerized using Docker.
-
-Docker provides a consistent runtime environment between:
-
-```text
-Developer Machine
-       |
-       v
-GitHub Actions
-       |
-       v
-Amazon ECR
-       |
-       v
-Amazon EKS
-```
-
-Build the image:
+Clone the repository:
 
 ```bash
-docker build -t flask-python-app .
+git clone https://github.com/nanda9/flask-python-app.git
+cd flask-python-app
 ```
 
-Tag the image for Amazon ECR:
+Verify AWS identity:
 
 ```bash
-docker tag flask-python-app:latest \
-405804178912.dkr.ecr.us-east-1.amazonaws.com/watchtower:<GIT_SHA>
+aws sts get-caller-identity
 ```
 
-Push the image:
+### Step 1 — Create AWS Infrastructure
 
 ```bash
-docker push \
-405804178912.dkr.ecr.us-east-1.amazonaws.com/watchtower:<GIT_SHA>
-```
+cd terraform-aws
 
----
-
-# Amazon ECR
-
-Amazon Elastic Container Registry stores the Docker images used by the EKS deployment.
-
-Repository:
-
-```text
-405804178912.dkr.ecr.us-east-1.amazonaws.com/watchtower
-```
-
-Images are tagged using Git commit SHA values.
-
-Example:
-
-```text
-watchtower:b9a7aba6eaadae3676f7de8af527e29f4d69c085
-```
-
-Using Git SHA tags provides immutable version identification and creates traceability between source code and deployed containers.
-
-```text
-Git Commit
-    |
-    v
-Docker Image
-    |
-    v
-Amazon ECR
-    |
-    v
-Helm
-    |
-    v
-Argo CD
-    |
-    v
-Kubernetes Pod
-```
-
-This is preferable to relying on a mutable:
-
-```text
-latest
-```
-
-tag.
-
----
-
-# Terraform
-
-Terraform is used to provision and manage AWS infrastructure.
-
-The infrastructure is designed as Infrastructure as Code so that the environment can be recreated consistently.
-
-The Terraform configuration provisions resources such as:
-
-```text
-AWS VPC
- |
- +-- Public Subnets
- |
- +-- Private Subnets
- |
- +-- Internet Gateway
- |
- +-- NAT Gateway
- |
- +-- Route Tables
- |
- +-- EKS Cluster
- |
- +-- EKS Node Group
- |
- +-- IAM Roles
- |
- +-- EKS OIDC Provider
- |
- +-- AWS Load Balancer Controller IAM
- |
- +-- Amazon ECR
- |
- +-- GitHub Actions OIDC
-```
-
-Terraform allows the entire AWS environment to be created or destroyed without manually creating individual AWS resources.
-
-Typical workflow:
-
-```bash
 terraform init
-
 terraform validate
-
+terraform fmt -recursive
 terraform plan
-
 terraform apply
 ```
 
-To destroy the environment:
+### Step 2 — Configure kubectl
 
 ```bash
-terraform plan -destroy
+aws eks update-kubeconfig \
+  --region us-east-1 \
+  --name watchtower-dev
+```
 
+Verify:
+
+```bash
+kubectl get nodes
+```
+
+### Step 3 — Create Kubernetes Infrastructure
+
+```bash
+cd Kubernetes
+
+terraform init
+terraform validate
+terraform plan
 terraform apply
 ```
 
-For cost management during development, the AWS environment can be destroyed when it is not being used and recreated when needed.
+### Step 4 — Verify Argo CD
 
----
+```bash
+kubectl get pods -n argocd
+```
 
-# Amazon EKS
+```bash
+kubectl get applications -n argocd
+```
 
-The Flask application runs on an Amazon EKS cluster.
+### Step 5 — Verify Monitoring
 
-Kubernetes provides:
+```bash
+kubectl get pods -n monitoring
+```
 
-* Container orchestration
-* Pod scheduling
-* Service discovery
-* Rolling deployments
-* Health checks
-* Self-healing
-* Resource management
-* RBAC
-* Horizontal scaling
+```bash
+kubectl get svc -n monitoring
+```
 
-The application is deployed into:
+### Step 6 — Verify Application
+
+```bash
+kubectl get pods -n dev
+```
+
+```bash
+kubectl get svc -n dev
+```
+
+```bash
+kubectl get ingress -n dev -o wide
+```
+
+### Step 7 — Verify Prometheus
+
+```bash
+kubectl get servicemonitor -n dev
+```
+
+Then query:
+
+```promql
+flask_requests_total
+```
+
+### Step 8 — Verify Grafana IRSA
+
+```bash
+kubectl get sa monitoring-grafana -n monitoring -o yaml
+```
+
+Verify the AWS IAM role annotation.
+
+Then:
+
+```bash
+kubectl describe pod \
+  -n monitoring \
+  monitoring-grafana-0
+```
+
+Expected AWS IRSA environment variables include:
 
 ```text
-dev
+AWS_ROLE_ARN
+AWS_WEB_IDENTITY_TOKEN_FILE
+AWS_REGION
+AWS_DEFAULT_REGION
 ```
 
-namespace.
+## Destroy Environment
 
----
+Destroy in reverse dependency order.
 
-# Kubernetes Resources
+### Step 1 — Destroy Kubernetes Layer
 
-The Helm chart manages Kubernetes resources including:
+```bash
+cd terraform-aws/Kubernetes
 
-```text
-Deployment
-Service
-Ingress
-HPA
-PodDisruptionBudget
-ServiceAccount
-RBAC
-ConfigMap
-Secret
-ServiceMonitor
-PrometheusRule
+terraform plan -destroy
+terraform destroy
 ```
 
----
+### Step 2 — Destroy AWS Layer
 
-# Kubernetes Deployment
+```bash
+cd ..
 
-The application is deployed through a Kubernetes Deployment.
-
-Architecture:
-
-```text
-Deployment
-    |
-    v
-ReplicaSet
-    |
-    v
-Flask Pods
+terraform plan -destroy
+terraform destroy
 ```
 
-The deployment uses a rolling update strategy.
+Always review the destroy plan before confirming.
 
-Health probes prevent traffic from being routed to containers that are not ready.
+Some AWS resources can have dependencies, including:
 
-The deployment also defines:
+- NAT Gateways
+- Load Balancers
+- EKS Node Groups
+- Network Interfaces
+- Security Groups
+- ECR resources
+- VPC resources
 
-* CPU requests
-* Memory requests
-* CPU limits
-* Memory limits
-* Startup probe
-* Readiness probe
-* Liveness probe
+The Terraform S3 state bucket should normally be retained so the environment can be recreated later.
 
----
-
-# Kubernetes Service
-
-The Flask application is exposed internally through a Kubernetes `ClusterIP` Service.
-
-Architecture:
-
-```text
-AWS ALB
-   |
-   v
-Ingress
-   |
-   v
-ClusterIP Service
-   |
-   v
-Flask Pod
-```
-
-The Service routes traffic from the Kubernetes networking layer to the Flask container.
-
----
-
-# AWS Application Load Balancer
-
-The application is exposed externally using the AWS Load Balancer Controller.
-
-The Kubernetes Ingress uses:
-
-```yaml
-ingress:
-  enabled: true
-  className: alb
-```
-
-Architecture:
-
-```text
-Internet
-   |
-   v
-AWS Application Load Balancer
-   |
-   v
-Kubernetes Ingress
-   |
-   v
-ClusterIP Service
-   |
-   v
-Flask Pod
-```
-
-The ALB provides the public entry point for the application.
-
----
-
-# AWS Load Balancer Controller
-
-The AWS Load Balancer Controller runs inside the EKS cluster.
-
-It watches Kubernetes resources such as:
-
-```text
-Ingress
-Service
-```
-
-and creates or updates AWS Elastic Load Balancing resources.
-
-The controller uses an IAM role associated with its Kubernetes ServiceAccount through AWS IAM/OIDC.
-
-This allows the controller to interact with AWS without storing long-lived AWS credentials inside Kubernetes.
-
----
-
-# RBAC
-
-The Flask application communicates with the Kubernetes API.
-
-The application uses a Kubernetes ServiceAccount:
-
-```text
-flask-sa
-```
-
-and appropriate RBAC permissions.
-
-Inside Kubernetes, the application loads:
-
-```python
-config.load_incluster_config()
-```
-
-The Kubernetes Python client then communicates with the Kubernetes API using the ServiceAccount identity.
-
-RBAC follows the principle of least privilege by limiting the application to the Kubernetes resources it needs.
-
----
-
-# Helm
-
-The Flask application is packaged as a Helm chart:
-
-```text
-flask-chart/
-```
-
-Helm provides:
-
-* Kubernetes templating
-* Configuration management
-* Reusable deployment definitions
-* Environment-specific configuration
-
-The chart contains:
-
-```text
-Deployment
-Service
-Ingress
-HPA
-PDB
-ServiceAccount
-RBAC
-ConfigMap
-Secret
-ServiceMonitor
-PrometheusRule
-```
-
-The container image is configured through Helm values:
-
-```yaml
-image:
-  repository: 405804178912.dkr.ecr.us-east-1.amazonaws.com/watchtower
-  pullPolicy: Always
-  tag: <GIT_SHA>
-```
-
-The image tag can therefore be changed through Git.
-
----
-
-# CI — GitHub Actions
-
-GitHub Actions provides the Continuous Integration pipeline.
-
-The CI pipeline validates the application, builds the Docker image, performs security scanning, authenticates to AWS using OIDC, and publishes the image to Amazon ECR.
-
-Conceptual workflow:
-
-```text
-Git Push
-   |
-   v
-GitHub Actions
-   |
-   +--> Checkout
-   |
-   +--> Install Dependencies
-   |
-   +--> Run Tests
-   |
-   +--> Build Docker Image
-   |
-   +--> Trivy Security Scan
-   |
-   +--> Request GitHub OIDC Token
-   |
-   +--> Assume AWS IAM Role
-   |
-   +--> Login to Amazon ECR
-   |
-   +--> Push Image
-   |
-   v
-Amazon ECR
-```
-
----
-
-# GitHub Actions OIDC
-
-The project uses GitHub Actions OIDC to authenticate GitHub Actions with AWS.
-
-Instead of storing a long-lived AWS access key and secret key in GitHub, GitHub Actions obtains an OIDC identity token and uses it to assume an AWS IAM role.
-
-Architecture:
-
-```text
-GitHub Actions
-      |
-      | OIDC Token
-      v
-AWS IAM OIDC Provider
-      |
-      v
-GitHub Actions IAM Role
-      |
-      v
-AWS ECR
-```
-
-The IAM role can be restricted to the specific GitHub repository and branch.
-
-This improves security because no permanent AWS credentials need to be stored in GitHub Actions secrets.
-
-Terraform manages the AWS-side OIDC resources.
-
----
-
-# Git SHA Image Versioning
-
-The deployment uses Git commit SHA values as Docker image tags.
-
-Example:
-
-```text
-Git Commit
-    |
-    v
-9b9bed84bd0e2c80ca6b4cde19ba14fc8e1b81f8
-    |
-    v
-Docker Image
-    |
-    v
-watchtower:9b9bed84bd0e2c80ca6b4cde19ba14fc8e1b81f8
-```
-
-This provides traceability between:
-
-```text
-Git Commit
-     ↓
-Docker Image
-     ↓
-Amazon ECR
-     ↓
-Helm Values
-     ↓
-Argo CD
-     ↓
-Kubernetes Deployment
-```
-
-This approach is more reliable than using mutable image tags such as `latest`.
-
----
-
-# Argo CD
-
-Argo CD provides Continuous Delivery using the GitOps model.
-
-The Argo CD Application watches:
-
-```text
-https://github.com/nanda9/flask-python-app.git
-```
-
-and deploys the:
-
-```text
-flask-chart
-```
-
-into:
-
-```text
-dev
-```
-
-namespace.
-
-The Argo CD Application uses automated synchronization:
-
-```yaml
-syncPolicy:
-  automated:
-    prune: true
-    selfHeal: true
-```
-
----
-
-# GitOps
-
-The desired Kubernetes state is stored in Git.
-
-Argo CD continuously compares:
-
-```text
-Git Desired State
-        |
-        | compare
-        v
-Kubernetes Actual State
-```
-
-If the desired state changes, Argo CD detects the new Git revision and synchronizes the cluster.
-
-Example:
+## Git Workflow
 
 ```text
 Developer
     |
     v
-Git Commit
+Feature Branch
     |
     v
-GitHub
+Pull Request
     |
     v
-Argo CD detects change
-    |
-    v
-Helm renders manifests
-    |
-    v
-Kubernetes
-    |
-    v
-New Flask Pod
-```
-
----
-
-# Automated Sync
-
-Argo CD automatically synchronizes changes from Git.
-
-For example, changing the Helm image tag:
-
-```yaml
-tag: e1c9ddbc72e88a765e871c4ae196a1767fdc08ff
-```
-
-to:
-
-```yaml
-tag: b9a7aba6eaadae3676f7de8af527e29f4d69c085
-```
-
-causes Argo CD to detect the Git change and deploy the new image.
-
----
-
-# Self-Healing
-
-With:
-
-```yaml
-selfHeal: true
-```
-
-Argo CD continuously reconciles the Kubernetes cluster.
-
-If a resource is manually changed:
-
-```text
-Git Desired State
-       |
-       | differs
-       v
-Kubernetes
-       |
-       v
-Argo CD detects drift
-       |
-       v
-Argo CD restores desired state
-```
-
-This is one of the key benefits of GitOps.
-
----
-
-# Pruning
-
-With:
-
-```yaml
-prune: true
-```
-
-resources removed from the Git desired state can also be removed from Kubernetes.
-
-This prevents obsolete Kubernetes resources from remaining in the environment.
-
----
-
-# Prometheus
-
-Prometheus provides metrics monitoring for the Kubernetes cluster and Flask application.
-
-The monitoring stack includes:
-
-```text
-Prometheus
-Alertmanager
-Grafana
-Node Exporter
-Kube State Metrics
-Prometheus Operator
-```
-
-Prometheus collects:
-
-* Kubernetes infrastructure metrics
-* Node metrics
-* Pod metrics
-* Deployment metrics
-* Application metrics
-
----
-
-# ServiceMonitor
-
-The Flask application exposes:
-
-```text
-/metrics
-```
-
-A Kubernetes `ServiceMonitor` configures Prometheus to scrape the application.
-
-Example:
-
-```yaml
-endpoints:
-  - interval: 15s
-    path: /metrics
-    port: http
-```
-
-The ServiceMonitor selects the Flask Service using Kubernetes labels.
-
-This allows Prometheus to automatically discover and scrape the application's metrics.
-
----
-
-# Application Monitoring
-
-The Flask application exposes metrics such as:
-
-```text
-flask_requests_total
-flask_request_duration_seconds
-```
-
-These metrics can be used to monitor:
-
-```text
-Request Volume
-Request Latency
-Endpoint Traffic
-HTTP Methods
-Application Availability
-```
-
----
-
-# PrometheusRule
-
-Application alerts are defined using Kubernetes `PrometheusRule` resources.
-
-For example, an alert can detect when a deployment has no available replicas:
-
-```promql
-kube_deployment_status_replicas_available{
-  namespace="dev",
-  deployment="my-python-app-flask-chart"
-} < 1
-```
-
-Prometheus evaluates the alert condition and sends firing alerts to Alertmanager.
-
----
-
-# Alertmanager
-
-Alertmanager handles alerts generated by Prometheus.
-
-Architecture:
-
-```text
-Prometheus
-    |
-    | Alert
-    v
-Alertmanager
-    |
-    +--> Group
-    |
-    +--> Deduplicate
-    |
-    +--> Route
-    |
-    +--> Notify
-```
-
-Alertmanager separates metric evaluation from alert routing and notification.
-
-The project can be configured to send alerts through email or other notification channels.
-
----
-
-# Grafana
-
-Grafana provides visualization for the monitoring platform.
-
-Prometheus is used as the primary metrics data source.
-
-Grafana dashboards can visualize:
-
-* Application availability
-* Request rate
-* Request latency
-* Pod count
-* CPU utilization
-* Memory utilization
-* Deployment replicas
-* HPA activity
-* Kubernetes resource health
-
----
-
-# Useful PromQL Queries
-
-## Application Availability
-
-```promql
-sum(
-  up{
-    job="my-python-app-flask-chart",
-    namespace="dev"
-  }
-)
-```
-
-A value of:
-
-```text
-1
-```
-
-indicates a healthy scrape target.
-
-A value of:
-
-```text
-0
-```
-
-indicates that Prometheus cannot successfully scrape the target.
-
----
-
-## Request Rate
-
-```promql
-rate(
-  flask_requests_total[5m]
-)
-```
-
----
-
-## Request Latency
-
-```promql
-rate(
-  flask_request_duration_seconds_sum[5m]
-)
-/
-rate(
-  flask_request_duration_seconds_count[5m]
-)
-```
-
----
-
-# Useful Kubernetes Commands
-
-## Check application pods
-
-```bash
-kubectl get pods -n dev
-```
-
-## Check services
-
-```bash
-kubectl get svc -n dev
-```
-
-## Check ingress
-
-```bash
-kubectl get ingress -n dev
-```
-
-## Check deployment
-
-```bash
-kubectl get deployment -n dev
-```
-
-## Check HPA
-
-```bash
-kubectl get hpa -n dev
-```
-
-## Check ServiceMonitor
-
-```bash
-kubectl get servicemonitor -n dev
-```
-
-## Check PrometheusRule
-
-```bash
-kubectl get prometheusrule -n dev
-```
-
-## Check Argo CD Application
-
-```bash
-kubectl get application my-python-app -n argocd
-```
-
-## Check Argo CD synchronization
-
-```bash
-kubectl get application my-python-app -n argocd -o wide
-```
-
----
-
-# Helm Validation
-
-Before committing Helm changes:
-
-```bash
-helm lint ./flask-chart
-```
-
-Render the Kubernetes manifests:
-
-```bash
-helm template my-python-app ./flask-chart
-```
-
-Save the rendered manifests:
-
-```bash
-helm template my-python-app ./flask-chart \
-  > /tmp/flask-rendered.yaml
-```
-
-Validate the manifests:
-
-```bash
-kubectl apply \
-  --dry-run=client \
-  -f /tmp/flask-rendered.yaml
-```
-
-This helps catch Helm and Kubernetes manifest errors before Argo CD synchronizes the application.
-
----
-
-# Deployment Verification
-
-After Argo CD synchronization:
-
-```bash
-kubectl get application my-python-app -n argocd
-```
-
-Expected:
-
-```text
-SYNC STATUS     HEALTH STATUS
-Synced          Healthy
-```
-
-Then verify:
-
-```bash
-kubectl get pods -n dev
-kubectl get svc -n dev
-kubectl get ingress -n dev
-kubectl get hpa -n dev
-kubectl get servicemonitor -n dev
-kubectl get prometheusrule -n dev
-```
-
----
-
-# End-to-End DevOps Flow
-
-The complete project demonstrates:
-
-```text
-1. Developer writes Python code
-             |
-             v
-2. Push code to GitHub
-             |
-             v
-3. GitHub Actions starts
-             |
-             +--> Run tests
-             |
-             +--> Build Docker image
-             |
-             +--> Trivy security scan
-             |
-             +--> Authenticate to AWS using OIDC
-             |
-             +--> Push image to Amazon ECR
-             |
-             v
-4. Git/Helm desired state updated
-             |
-             v
-5. Argo CD detects Git change
-             |
-             v
-6. Helm renders Kubernetes manifests
-             |
-             v
-7. EKS deploys new application version
-             |
-             v
-8. AWS ALB exposes application
-             |
-             v
-9. Prometheus collects metrics
-             |
-             +--> Grafana dashboards
-             |
-             +--> Alertmanager notifications
-```
-
----
-
-# CI vs CD
-
-One of the main DevOps concepts demonstrated by this project is the separation between CI and CD.
-
-### Continuous Integration
-
-```text
 GitHub Actions
-```
-
-Responsible for:
-
-* Code checkout
-* Dependency installation
-* Automated tests
-* Docker build
-* Security scanning
-* ECR image publishing
-
-### Continuous Delivery
-
-```text
+    |
+    +--> Test
+    +--> Build
+    +--> Scan
+    +--> Push
+    |
+    v
+Merge
+    |
+    v
 Argo CD
-```
-
-Responsible for:
-
-* Watching Git
-* Detecting configuration changes
-* Rendering Helm manifests
-* Synchronizing Kubernetes
-* Self-healing
-* Pruning obsolete resources
-
-Therefore:
-
-```text
-CI = GitHub Actions
-
-CD = Argo CD
-```
-
----
-
-# Security
-
-The project demonstrates several DevSecOps practices.
-
-### GitHub OIDC
-
-Avoids storing long-lived AWS access keys in GitHub Actions.
-
-### IAM Least Privilege
-
-GitHub Actions and Kubernetes workloads use dedicated IAM roles with limited permissions.
-
-### Kubernetes RBAC
-
-The Flask application receives only the Kubernetes permissions required for its functionality.
-
-### Container Security
-
-Trivy is used to scan container images for vulnerabilities.
-
-### Immutable Image Tags
-
-Git SHA image tags provide version traceability and reduce the risk associated with mutable tags such as `latest`.
-
----
-
-# Cost Management
-
-This project uses AWS resources that can generate charges, including:
-
-```text
+    |
+    v
 EKS
-EC2 Worker Nodes
-NAT Gateway
-Elastic IP
-Application Load Balancer
-ECR
-EBS volumes
 ```
 
-For development and interview practice, the environment can be destroyed when it is not being used.
+## Security Principles
 
-Terraform allows the infrastructure to be recreated when needed:
+### OIDC Instead of Long-Lived AWS Keys
 
-```bash
-terraform plan
-terraform apply
+GitHub Actions uses AWS OIDC.
+
+### IRSA Instead of Static Credentials
+
+Grafana and AWS Load Balancer Controller use Kubernetes ServiceAccounts with IAM roles.
+
+### Least Privilege
+
+IAM policies should contain only the permissions required by each workload.
+
+### Container Scanning
+
+Use Trivy to identify image vulnerabilities.
+
+### Image Signing
+
+Use Cosign to establish image provenance and integrity.
+
+### Secrets
+
+Never commit:
+
+```text
+*.tfvars
+*.tfstate
+*.tfstate.*
+.env
+credentials
+private keys
+passwords
+tokens
+runtime databases
 ```
 
-and destroyed when finished:
+## Interview Walkthrough
 
-```bash
-terraform plan -destroy
-terraform apply
+A concise interview explanation can follow this sequence:
+
+### 1. Application
+
+Explain the Flask application and its `/`, `/health`, and `/metrics` endpoints.
+
+### 2. Docker
+
+Explain how Docker creates a consistent and reproducible application runtime.
+
+### 3. Kubernetes
+
+Explain Kubernetes scheduling, self-healing, service discovery, rolling deployments, and scaling.
+
+### 4. EKS
+
+Explain why the managed Amazon EKS control plane is used.
+
+### 5. Helm
+
+Explain how Helm packages Kubernetes resources and supports environment-specific configuration.
+
+### 6. GitHub Actions
+
+Explain Continuous Integration:
+
+```text
+Code
+→ Test
+→ Build
+→ Scan
+→ Push
 ```
 
-Before destroying infrastructure, always review the Terraform plan carefully.
+### 7. ECR
 
----
+Explain immutable Git SHA image tagging and container storage.
 
-# Key DevOps Concepts Demonstrated
+### 8. Argo CD
 
-This project demonstrates practical knowledge of:
+Explain GitOps Continuous Delivery:
 
-### Application
+```text
+Git
+→ Argo CD
+→ EKS
+```
 
-* Python
-* Flask
-* REST endpoints
-* Health checks
-* Prometheus metrics
+### 9. AWS Load Balancer Controller
 
-### Containers
+Explain:
 
-* Docker
-* Docker image lifecycle
-* Amazon ECR
-* Immutable image tags
+```text
+Internet
+→ ALB
+→ Ingress
+→ Service
+→ Pod
+```
 
-### Kubernetes
+### 10. RBAC
 
-* Pods
-* Deployments
-* Services
-* Ingress
-* HPA
-* PDB
-* ConfigMaps
-* Secrets
-* ServiceAccounts
-* RBAC
-* Health probes
+Explain how the Flask application securely reads Kubernetes pod information.
 
-### AWS
+### 11. Prometheus
 
-* VPC
-* Public/private subnets
-* NAT Gateway
-* EKS
-* ECR
-* IAM
-* OIDC
-* Application Load Balancer
-* AWS Load Balancer Controller
+Explain how Prometheus scrapes Flask application metrics.
 
-### Infrastructure as Code
+### 12. Grafana
 
-* Terraform
-* Reusable infrastructure
-* Terraform modules
-* Infrastructure lifecycle management
+Explain how metrics and logs are visualized.
 
-### CI/CD
+### 13. CloudWatch
 
-* GitHub Actions
-* Automated testing
-* Docker builds
-* Security scanning
-* ECR publishing
-* Argo CD
-* GitOps
+Explain AWS infrastructure monitoring through Grafana.
 
-### Observability
+### 14. IRSA
 
-* Prometheus
-* Grafana
-* Alertmanager
-* ServiceMonitor
-* PrometheusRule
-* Application metrics
+Explain how workloads access AWS APIs without static AWS access keys.
 
----
+### 15. Terraform
 
-# Summary
+Explain infrastructure as code, remote state, and why AWS and Kubernetes Terraform layers are separated.
 
+## End-to-End Production Flow
 
-> I built an end-to-end DevOps pipeline for a Python Flask application running on Amazon EKS. Terraform provisions the AWS infrastructure including the VPC, EKS cluster, worker nodes, ECR, IAM, and GitHub OIDC integration. GitHub Actions performs CI by running tests, building the Docker image, scanning it with Trivy, authenticating to AWS through OIDC, and publishing the image to ECR. Argo CD provides GitOps-based continuous delivery by monitoring the Git repository and synchronizing Helm configuration into EKS. The application is exposed through an AWS Application Load Balancer using the AWS Load Balancer Controller. For observability, the application exposes Prometheus metrics, Prometheus collects them through a ServiceMonitor, Grafana provides dashboards, and Alertmanager handles alerts. The container image is tagged with the Git commit SHA so that every Kubernetes deployment can be traced back to a specific source-code version.
+```text
+Developer
+   |
+   v
+GitHub
+   |
+   v
+Pull Request
+   |
+   v
+GitHub Actions
+   |
+   +--> Unit Tests
+   +--> Docker Build
+   +--> Security Scan
+   +--> AWS OIDC
+   |
+   v
+Amazon ECR
+   |
+   v
+Argo CD / GitOps
+   |
+   v
+Helm
+   |
+   v
+Amazon EKS
+   |
+   v
+AWS ALB
+   |
+   v
+Flask Application
+   |
+   +----------------------+
+   |                      |
+   v                      v
+Prometheus             CloudWatch
+   |                      |
+   v                      |
+Grafana <----------------+
+   |
+   +--> Loki
+   |
+   +--> Alertmanager
+```
+
+## Key DevOps Concepts Demonstrated
+
+- Infrastructure as Code
+- Immutable infrastructure
+- Containerization
+- Kubernetes orchestration
+- Kubernetes RBAC
+- Helm packaging
+- GitOps
+- Continuous Integration
+- Continuous Delivery
+- AWS IAM
+- GitHub OIDC
+- EKS IRSA
+- Container security
+- Image signing
+- Application monitoring
+- Infrastructure monitoring
+- Centralized logging
+- Alerting
+- Terraform remote state
+- Infrastructure lifecycle management
+
+## Repository
+
+GitHub:
+
+https://github.com/nanda9/flask-python-app
+
+## Summary
+
+This project implements a production-style DevOps platform around a Flask application running on Amazon EKS.
+
+The platform combines:
+
+```text
+GitHub
+   ↓
+GitHub Actions
+   ↓
+Docker
+   ↓
+Amazon ECR
+   ↓
+Argo CD
+   ↓
+Helm
+   ↓
+Amazon EKS
+   ↓
+AWS ALB
+   ↓
+Flask
+   ↓
+Prometheus
+   ↓
+Grafana
+   ↓
+CloudWatch
+```
+
+Terraform manages the infrastructure, GitHub Actions provides CI, Argo CD provides GitOps-based CD, Helm manages Kubernetes packaging, and Prometheus/Grafana/Loki/Alertmanager/CloudWatch provide observability.
+
+The project is designed to demonstrate an end-to-end production-oriented DevOps workflow.
