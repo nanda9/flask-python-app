@@ -14,7 +14,7 @@ resource "kubernetes_service_account_v1" "aws_load_balancer_controller" {
     namespace = "kube-system"
 
     annotations = {
-      "eks.amazonaws.com/role-arn" = "data.terraform_remote_state.aws.outputs.aws_load_balancer_controller_role_arn"
+      "eks.amazonaws.com/role-arn" = data.terraform_remote_state.aws.outputs.aws_load_balancer_controller_role_arn
     }
   }
 }

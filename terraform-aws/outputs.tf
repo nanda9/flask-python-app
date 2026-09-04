@@ -47,3 +47,8 @@ output "aws_load_balancer_controller_role_arn" {
   description = "IAM role ARN for AWS Load Balancer Controller"
   value       = module.eks.aws_load_balancer_controller_role_arn
 }
+
+output "grafana_cloudwatch_role_arn" {
+  description = "IAM role ARN for Grafana CloudWatch access"
+  value       = module.eks.grafana_cloudwatch_role_arn
+}

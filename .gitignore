@@ -67,3 +67,7 @@ terraform.rc
 rendered.yaml
 my-python-app-argocd-backup.yaml
 trivy.json
+
+# Grafana runtime database
+grafana-backup.db
+

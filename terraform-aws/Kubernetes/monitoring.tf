@@ -17,6 +17,13 @@ resource "helm_release" "monitoring" {
     file("${path.module}/../../monitoring/monitoring-values.yaml")
   ]
 
+  set = [
+    {
+      name  = "grafana.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = data.terraform_remote_state.aws.outputs.grafana_cloudwatch_role_arn
+    }
+  ]
+
   depends_on = [
     kubernetes_namespace_v1.monitoring,
     kubernetes_secret_v1.grafana_smtp

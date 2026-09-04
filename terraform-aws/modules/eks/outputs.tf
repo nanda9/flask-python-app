@@ -27,3 +27,8 @@ output "aws_load_balancer_controller_role_arn" {
   description = "IAM role ARN for AWS Load Balancer Controller"
   value       = aws_iam_role.aws_load_balancer_controller.arn
 }
+
+output "grafana_cloudwatch_role_arn" {
+  description = "IAM role ARN for Grafana CloudWatch access"
+  value       = aws_iam_role.grafana_cloudwatch.arn
+}
